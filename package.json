@@ -1,0 +1,23 @@
+{
+  "name": "gabiland",
+  "gabi": "gabi",
+  "version": "1.0.0",
+  "description": "Gabiland magical kingdom",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "node build/index.js",
+    "dev": "node --watch ./build/index.js",
+    "build": "npx tsc --build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gabriel",
+    "gabiland"
+  ],
+  "author": "Gabriel De Los Rios",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.13.0",
+    "typescript": "^4.9.5"
+  }
+}
