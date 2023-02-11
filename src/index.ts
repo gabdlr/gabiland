@@ -6,7 +6,7 @@ const hostname = "0.0.0.0";
 const server = http.createServer(async (req, res) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
-  if (req.url === "/favicon.ico") return res.end();
+  if (req.url === "/favicon.ico" || req.url === "/robots.txt") return res.end();
   if (req.url && req.url.length > 1) {
     let incomingMessage = utils.parseURL(req.url);
     let sanitizedMessage = utils.sanitizeString(incomingMessage);
