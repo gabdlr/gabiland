@@ -67,6 +67,11 @@ const server = http.createServer(async (req, res) => {
     </div>
 
   </body>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => 
+    history.pushState({prev:window.location.pathname},'','/')
+  );
+  </script>
   </html>
   `
   );
