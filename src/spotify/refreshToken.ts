@@ -2,11 +2,16 @@ import { storeSpotifyToken } from "./../storage/spotify/storeSpotifyToken";
 import { RefreshTokenResponse } from "./refresh-token.model";
 import { SpotifyTokenRecord } from "./token.model";
 import { findEnvironmentVariable } from "./../utils/envVarHandler";
+import { env } from "node:process";
 
 export async function refreshToken() {
   let token = null;
-  let authVar = await findEnvironmentVariable("spotify_authorization_token");
-  let refreshToken = await findEnvironmentVariable("spotify_refresh_token");
+  let authVar = env["spotify_authorization_token"]
+    ? env["spotify_authorization_token"]
+    : await findEnvironmentVariable("spotify_authorization_token");
+  let refreshToken = env["spotify_refresh_token"]
+    ? env["spotify_refresh_token"]
+    : await findEnvironmentVariable("spotify_refresh_token");
   try {
     const tokenData: RefreshTokenResponse = await (
       await fetch("https://accounts.spotify.com/api/token", {
