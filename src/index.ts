@@ -4,18 +4,20 @@ import { store } from "./storage";
 import { fetchSong } from "./spotify/fetchSong";
 import { renderSpotifyComponent } from "./spotify/component";
 import { songEndpoint } from "./spotify/songEndpoint";
+import { filterRequest } from "./utils/requestFilter";
 const hostname = "0.0.0.0";
 
 const server = http.createServer(async (req, res) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
-  if (req.url === "/favicon.ico" || req.url === "/robots.txt") return res.end();
+
+  if (req.url === "/favicon.ico") return res.end();
   if (req.url === "/song") {
     const response = await songEndpoint(res);
     return res.end(JSON.stringify(response));
   }
 
-  if (req.url && req.url.length > 1) {
+  if (req.url && req.url.length > 1 && !filterRequest(req.url)) {
     let incomingMessage = utils.parseURL(req.url);
     let sanitizedMessage = utils.sanitizeString(incomingMessage);
     if (sanitizedMessage.length > 0) {
