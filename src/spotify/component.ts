@@ -38,9 +38,9 @@ export function renderSpotifyComponent(song: Song | null) {
           <div class="me-2">
             <a href="${song.trackURL}" id="spotify-album-href"><img heigth="64px" width="64px" src="${song.albumImageUrl}" target="blank" id="spotify-album-image"></img></a>
           </div>
-          <div class="d-flex flex-column justify-content-center" id="spotify-artist">
-            <a href="${song.albumURL}" class="song-title-text" target="blank"  id="spotify-track">${song.name}</a>
-            <div class="d-flex flex-row">
+          <div class="d-flex flex-column justify-content-center">
+            <a href="${song.albumURL}" class="song-title-text" target="blank" id="spotify-track">${song.name}</a>
+            <div class="d-flex flex-row flex-wrap" id="spotify-artist">
             ` +
     artistEl +
     `</div>

@@ -132,7 +132,7 @@ const server = http.createServer(async (req, res) => {
     song.song.artist.forEach((artist, index) => {
       let artistRef = document.createElement("a");
       artistRef.setAttribute("href", artist.external_urls.spotify);
-      artistRef.classList.add("artist", "song-complementary-info-text", "m-0");
+      artistRef.classList.add("artist", "song-complementary-info-text", "m-0", "me-1");
       artistRef.innerText = artist.name + (index + 1 !== song.song.artist.length ? "," : "");
       document.getElementById("spotify-artist").appendChild(artistRef);
     });
@@ -140,10 +140,15 @@ const server = http.createServer(async (req, res) => {
 
   document.addEventListener('DOMContentLoaded', () =>{ 
     history.pushState({prev:window.location.pathname},'','/');
-    ${song ? `fetchNextSong(${(song?.duration * 1000) - (song?.playingSecond * 1000) === 0 ? 
-      (song?.duration * 1000) : 
-      (song?.duration * 1000) - (song?.playingSecond * 1000)
-      })` : `fetchNextSong(3600000); document.getElementById('spotifyContainer').style.setProperty('display','none');`}
+    ${
+      song
+        ? `fetchNextSong(${
+            song?.duration * 1000 - song?.playingSecond * 1000 === 0
+              ? song?.duration * 1000
+              : song?.duration * 1000 - song?.playingSecond * 1000
+          })`
+        : `fetchNextSong(3600000); document.getElementById('spotifyContainer').style.setProperty('display','none');`
+    }
   });
   
   </script>
