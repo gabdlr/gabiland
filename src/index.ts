@@ -8,6 +8,7 @@ import { filterRequest } from "./utils/requestFilter";
 const hostname = "0.0.0.0";
 
 const server = http.createServer(async (req, res) => {
+  console.log(req.url);
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
 
@@ -27,9 +28,7 @@ const server = http.createServer(async (req, res) => {
   let messagesComponent = await store.retriveMessages();
   const song = await fetchSong();
 
-  let spotifyComponent = "";
-  if (song) spotifyComponent = renderSpotifyComponent(song);
-
+  let spotifyComponent = renderSpotifyComponent(song);
   const content =
     `
   <!DOCTYPE html>
@@ -74,13 +73,6 @@ const server = http.createServer(async (req, res) => {
         <div class="container-fluid">` +
     spotifyComponent +
     `
-          <div class="d-flex">
-            <div>
-            <img heigth="64px" width="64px" src=""></img>
-            </div>
-            <div>
-            </div>
-          </div>
         </div>
       </nav>
       <main class="d-flex align-items-center h-100 p-4">
@@ -95,62 +87,8 @@ const server = http.createServer(async (req, res) => {
   </body>
   <script>
   
-  function fetchNextSong(timeToNextSong) {
-    setTimeout(() => {
-      fetch("/song")
-        .then((response) => response.json())
-        .then((response) => {
-          syncSpotifyComponent(response);
-          return fetchNextSong(
-            (response.song?.duration  - response.song?.playingSecond ) === 0 ? 
-            response.song?.duration  : 
-            (response.song?.duration  - response.song?.playingSecond)
-          );
-        });
-    }, timeToNextSong);
-  }
-  
-  function syncSpotifyComponent(song) {
-    if(song.error){
-      document.getElementById('spotifyContainer').style.setProperty('display','none');
-      return fetchNextSong(3600000);
-    }
-    
-    //updates image
-    if(document.getElementById('spotifyContainer').style['display'] !== 'block'){
-      document.getElementById('spotifyContainer').style.setProperty('display','block');
-    }
-    document.getElementById("spotify-album-href")?.setAttribute("href", song.song.trackURL);
-    let albumImageUrl = song.song.album.images.find((imageURL) => imageURL.width === 64)?.url;
-    if (!albumImageUrl) albumImageUrl = song.song.album.images[0].url ?? "";
-    document.getElementById("spotify-album-image")?.setAttribute("src", albumImageUrl);
-
-    //updates song title
-    document.getElementById("spotify-track").innerText = song.song.name;
-    document.getElementById("spotify-track")?.setAttribute("href", song.song.album.external_urls.spotify);
-    
-    //updates artists
-    document.querySelectorAll(".artist").forEach((node) => node.remove());
-    song.song.artist.forEach((artist, index) => {
-      let artistRef = document.createElement("a");
-      artistRef.setAttribute("href", artist.external_urls.spotify);
-      artistRef.classList.add("artist", "song-complementary-info-text", "m-0", "me-1");
-      artistRef.innerText = artist.name + (index + 1 !== song.song.artist.length ? "," : "");
-      document.getElementById("spotify-artist").appendChild(artistRef);
-    });
-  }
-
   document.addEventListener('DOMContentLoaded', () =>{ 
     history.pushState({prev:window.location.pathname},'','/');
-    ${
-      song
-        ? `fetchNextSong(${
-            song?.duration * 1000 - song?.playingSecond * 1000 === 0
-              ? song?.duration * 1000
-              : song?.duration * 1000 - song?.playingSecond * 1000
-          })`
-        : `fetchNextSong(3600000); document.getElementById('spotifyContainer').style.setProperty('display','none');`
-    }
   });
   
   </script>
