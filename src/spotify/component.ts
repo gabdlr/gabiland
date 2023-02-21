@@ -32,27 +32,72 @@ export function renderSpotifyComponent(song: Song | null) {
       .song-title-text:hover, .song-complementary-info-text:hover{
         text-decoration: underline;
       }
+      #spotifyComponent {
+        height: 0px;
+        overflow: hidden;
+        visibility: hidden;
+      }
+      
+      .slide-down {
+        animation: slide-down 0.6s linear both;
+      }
+      
+      .slide-up {
+        animation: slide-up 0.6s linear both;
+      }
+      
+      @keyframes slide-down {
+        0% {
+          visibility: hidden;
+          height: 0;
+        }
+      
+        95% {
+          visibility: visible;
+          height: 70px;
+        }
+      
+        100% {
+          visibility: visible;
+          height: auto;
+        }
+      }
+      
+      @keyframes slide-up {
+        from {
+          visibility: visible;
+          height: 70px;
+        }
+      
+        to {
+          visibility: hidden;
+          height: 0;
+        }
+      }  
     </style>
-    <nav class="navbar fixed-top" style="background-color: #181818; min-height: 70px; border-bottom: 1px solid #282828;">
-      <div class="container-fluid">
-        <div class="d-flex">
-          <div class="me-2">
-            <a href="${
-              song?.trackURL ?? " "
-            }" id="spotify-album-href"><img heigth="64px" width="64px" src="${
+
+    <nav class="navbar fixed-top" style="background-color: #181818; border-bottom: 1px solid #282828;" id="spotifyComponent">
+      <div id="spotifyComponentContainer">  
+        <div class="container-fluid">
+            <div class="d-flex">
+              <div class="me-2">
+                <a href="${
+                  song?.trackURL ?? " "
+                }" id="spotify-album-href"><img heigth="64px" width="64px" src="${
       song?.albumImageUrl ?? " "
     }" target="blank" id="spotify-album-image"></img></a>
-          </div>
-          <div class="d-flex flex-column justify-content-center">
-            <a href="${
-              song?.albumURL ?? " "
-            }" class="song-title-text" target="blank" id="spotify-track">${
+              </div>
+              <div class="d-flex flex-column justify-content-center">
+                <a href="${
+                  song?.albumURL ?? " "
+                }" class="song-title-text" target="blank" id="spotify-track">${
       song?.name ?? " "
     }</a>
-            <div class="d-flex flex-row flex-wrap" id="spotify-artist">
-            ` +
+                <div class="d-flex flex-row flex-wrap" id="spotify-artist">
+                ` +
     artistEl +
     `</div>
+            </div>
           </div>
         </div>
       </div>
@@ -84,14 +129,17 @@ export function renderSpotifyComponent(song: Song | null) {
   
       function syncSpotifyComponent(song) {
         if(!song){
-          document.getElementById('spotifyContainer').style.setProperty('display','none');
+          if(spotifyComponent.classList.contains("slide-down")){
+            //removes div if present
+            spotifyComponent.classList.add("slide-up");
+            spotifyComponent.classList.remove("slide-down");
+          }
           return;
         }
-        
-        //updates visibility
-        if(document.getElementById('spotifyContainer').style['display'] !== 'block'){
-          document.getElementById('spotifyContainer').style.setProperty('display','block');
-        }
+
+        //shows div
+        spotifyComponent.classList.add("slide-down");
+        spotifyComponent.classList.remove("slide-up");
 
         //updates image
         document.getElementById("spotify-album-href")?.setAttribute("href", song.song.trackURL);
@@ -131,7 +179,7 @@ export function renderSpotifyComponent(song: Song | null) {
               song?.duration * 1000 - song?.playingSecond * 1000 === 0
                 ? 60000
                 : song?.duration * 1000 - song?.playingSecond * 1000
-            })`
+            });spotifyComponent.classList.add("slide-down");`
           : `fetchNextSong(60000); syncSpotifyComponent(null);`
       }
     });

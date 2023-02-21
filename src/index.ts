@@ -8,7 +8,6 @@ import { filterRequest } from "./utils/requestFilter";
 const hostname = "0.0.0.0";
 
 const server = http.createServer(async (req, res) => {
-  console.log(req.url);
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
 
@@ -69,7 +68,7 @@ const server = http.createServer(async (req, res) => {
   </style>
   <body style="background-image: url( 'https://res.cloudinary.com/programming-web-venture/image/upload/v1676096775/background_wevsyq.svg' ); background-position: center; background-size: cover;">
     <div class="container vh-100">
-      <nav class="navbar fixed-top" style="background-color: rgba(24, 24, 24, 0.9); min-height: 70px;" id="spotifyContainer">
+      <nav class="navbar fixed-top" style="min-height: 70px;" id="spotifyContainer">
         <div class="container-fluid">` +
     spotifyComponent +
     `
