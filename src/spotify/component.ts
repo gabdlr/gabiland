@@ -76,9 +76,8 @@ export function renderSpotifyComponent(song: Song | null) {
       }  
     </style>
 
-    <nav class="navbar fixed-top" style="background-color: #181818; border-bottom: 1px solid #282828;" id="spotifyComponent">
-      <div id="spotifyComponentContainer">  
-        <div class="container-fluid">
+    <section class="navbar fixed-top" style="background-color: #181818; border-bottom: 1px solid #282828;" id="spotifyComponent">
+      <div id="spotifyComponentContainer" class="container-fluid">  
             <div class="d-flex">
               <div class="me-2">
                 <a href="${
@@ -99,9 +98,8 @@ export function renderSpotifyComponent(song: Song | null) {
     `</div>
             </div>
           </div>
-        </div>
       </div>
-    </nav>
+    </section>
     <script>
     document.addEventListener('DOMContentLoaded', () =>{
       let blurDate;

@@ -28,6 +28,7 @@ const server = http.createServer(async (req, res) => {
   const song = await fetchSong();
 
   let spotifyComponent = renderSpotifyComponent(song);
+  // prettier-ignore
   const content =
     `
   <!DOCTYPE html>
@@ -68,28 +69,22 @@ const server = http.createServer(async (req, res) => {
   </style>
   <body style="background-image: url( 'https://res.cloudinary.com/programming-web-venture/image/upload/v1676096775/background_wevsyq.svg' ); background-position: center; background-size: cover;">
     <div class="container vh-100">
-      <nav class="navbar fixed-top" style="min-height: 70px;" id="spotifyContainer">
-        <div class="container-fluid">` +
-    spotifyComponent +
-    `
-        </div>
-      </nav>
+      <div class="navbar fixed-top" style="min-height: 70px;" id="spotifyContainer">
+        ` + spotifyComponent + `
+      </div>
       <main class="d-flex align-items-center h-100 p-4">
         <div class="card w-100" style="height: 400px; overflow-y: auto; background-color: rgba(255, 255, 255, 0.1);">
-          <div class="card-body d-flex flex-column-reverse">` +
-    messagesComponent +
-    `
+          <div class="card-body d-flex flex-column-reverse">
+          ` + messagesComponent + `
           </div>
         </div>
       </main>
     </div>
   </body>
   <script>
-  
   document.addEventListener('DOMContentLoaded', () =>{ 
     history.pushState({prev:window.location.pathname},'','/');
   });
-  
   </script>
   </html>
   `;
