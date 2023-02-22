@@ -11,13 +11,23 @@ const server = http.createServer(async (req, res) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
 
-  if (req.url === "/favicon.ico") return res.end();
+  if (req.url === "/favicon.ico") req.url = "/assets/favicon.ico";
   if (req.url === "/song") {
     const response = await songEndpoint(res);
     return res.end(JSON.stringify(response));
-  }
-
-  if (req.url && req.url.length > 1 && !filterRequest(req.url)) {
+  } else if (
+    req.url &&
+    new RegExp(/\/assets\/+(\/[\w]\/)*([\w\.\w])+/).test(req.url)
+  ) {
+    try {
+      const file = await utils.serveStaticFile(req.url, res);
+      if (file) {
+        return file;
+      }
+    } catch (e) {
+      //handle error
+    }
+  } else if (req.url && req.url.length > 1 && !filterRequest(req.url)) {
     let incomingMessage = utils.parseURL(req.url);
     let sanitizedMessage = utils.sanitizeString(incomingMessage);
     if (sanitizedMessage.length > 0) {
@@ -68,8 +78,14 @@ const server = http.createServer(async (req, res) => {
       --bs-alert-border-color: var(--bs-success-border-subtle);
       --bs-alert-link-color: var(--bs-success-text);
     }
+    body{
+      background-color: #000000;
+      background-image: url( '/assets/images/background-image.webp' ); 
+      background-position: center; 
+      background-size: cover;
+    }
   </style>
-  <body style="background-image: url( 'https://res.cloudinary.com/programming-web-venture/image/upload/v1676096775/background_wevsyq.svg' ); background-position: center; background-size: cover;">
+  <body>
     <div class="container vh-100">
       <div class="navbar fixed-top" style="min-height: 70px;" id="spotifyContainer">
         ` + spotifyComponent + `

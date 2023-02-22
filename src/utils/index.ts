@@ -1,4 +1,10 @@
 import { sanitizeString } from "./stringSanitizer";
 import { parseURL } from "./urlParser";
 import { filterRequest } from "./requestFilter";
-export const utils = { sanitizeString, parseURL, filterRequest };
+import { serveStaticFile } from "./serveStaticFile";
+export const utils = {
+  sanitizeString,
+  parseURL,
+  filterRequest,
+  serveStaticFile,
+};
