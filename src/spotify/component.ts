@@ -82,7 +82,7 @@ export function renderSpotifyComponent(song: Song | null) {
               <div class="me-2">
                 <a href="${
                   song?.trackURL ?? " "
-                }" id="spotify-album-href"><img heigth="64px" width="64px" alt="Album image" src="${
+                }" id="spotify-album-href"><img height="64px" width="64px" alt="Album image" src="${
       song?.albumImageUrl ?? " "
     }" target="blank" id="spotify-album-image"></img></a>
               </div>
