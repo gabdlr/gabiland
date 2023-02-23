@@ -80,7 +80,7 @@ const server = http.createServer(async (req, res) => {
     }
     body{
       background-color: #000000;
-      background-image: url( '/assets/images/background-image.webp' ); 
+      background-image: url( 'https://res.cloudinary.com/programming-web-venture/image/upload/v1677115090/background-image_ynufzh.webp' ); 
       background-position: center; 
       background-size: cover;
     }
