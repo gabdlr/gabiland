@@ -126,7 +126,7 @@ export function renderSpotifyComponent(song: Song | null) {
       }
   
       function syncSpotifyComponent(song) {
-        if(!song){
+        if(!song || song.error){
           if(spotifyComponent.classList.contains("slide-down")){
             //removes div if present
             spotifyComponent.classList.add("slide-up");
