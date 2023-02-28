@@ -5,16 +5,35 @@ import { fetchSong } from "./spotify/fetchSong";
 import { renderSpotifyComponent } from "./spotify/component";
 import { songEndpoint } from "./spotify/songEndpoint";
 import { filterRequest } from "./utils/requestFilter";
+import { renderChatComponent } from "./chat/component";
+import { renderAdminChatComponent } from "./chat/admin/component";
+import { resolveAdminChatRequest } from "./chat/admin/resolveRequest";
+import { sendChatContactEmail } from "./chat/admin/contactEndpoint";
 const hostname = "0.0.0.0";
 
 const server = http.createServer(async (req, res) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
-
+  if (req.url?.includes("/admin/chat")) {
+    const room = await resolveAdminChatRequest(req.url);
+    if (room) {
+      const content = renderAdminChatComponent(+room);
+      return res.end(content);
+    }
+  }
   if (req.url === "/favicon.ico") req.url = "/assets/favicon.ico";
   if (req.url === "/song") {
     const response = await songEndpoint(res);
     return res.end(JSON.stringify(response));
+  } else if (req.url === "/chat/contact") {
+    res.setHeader("Content-Type", "application/json");
+    try {
+      await sendChatContactEmail(req);
+      return res.end(JSON.stringify({ response: "ok" }));
+    } catch (error) {
+      res.statusCode = 400;
+      return res.end(JSON.stringify({ error }));
+    }
   } else if (
     req.url &&
     new RegExp(/\/assets\/+(\/[\w]\/)*([\w\.\w])+/).test(req.url)
@@ -38,6 +57,7 @@ const server = http.createServer(async (req, res) => {
   const song = await fetchSong();
 
   let spotifyComponent = renderSpotifyComponent(song);
+  let chatComponent = renderChatComponent();
   // prettier-ignore
   const content =
     `
@@ -52,6 +72,7 @@ const server = http.createServer(async (req, res) => {
     <title>Gabiland Republic</title>
     <link rel="icon" type="ico" href="https://res.cloudinary.com/programming-web-venture/image/upload/v1677117169/favicon_ioevdp.ico"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script type='text/javascript' src='https://cdn.scaledrone.com/scaledrone.min.js'></script>
   </head>
   <style>
    ::-webkit-scrollbar {
@@ -87,6 +108,9 @@ const server = http.createServer(async (req, res) => {
     }
   </style>
   <body>
+    <div class="contact-container">
+    ` + chatComponent + `
+    </div>
     <div class="container vh-100">
       <div class="navbar fixed-top" style="min-height: 70px;" id="spotifyContainer">
         ` + spotifyComponent + `
