@@ -13,8 +13,7 @@ export async function songEndpoint(
     if (song) {
       response = { song: song.toObject() };
     } else {
-      res.statusCode = 420;
-      response = { error: "nothing returned" };
+      res.statusCode = 204;
     }
   } catch (e) {
     res.statusCode = 500;
