@@ -70,6 +70,7 @@ const server = http.createServer(async (req, res) => {
     <meta name="robots" content="index,nofollow,noarchive" />
     <meta name="description" content="A web developer website">
     <title>Gabiland Republic</title>
+    <link rel="preconnect" href="wss://api.scaledrone.com/v3/websocket">
     <link rel="icon" type="ico" href="https://res.cloudinary.com/programming-web-venture/image/upload/v1677117169/favicon_ioevdp.ico"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <script type='text/javascript' src='https://cdn.scaledrone.com/scaledrone.min.js'></script>
