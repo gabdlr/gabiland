@@ -105,6 +105,7 @@ const server = http.createServer(async (req, res) => {
       background-image: url( 'https://res.cloudinary.com/programming-web-venture/image/upload/v1677115090/background-image_ynufzh.webp' ); 
       background-position: center; 
       background-size: cover;
+      background-repeat: no-repeat;
     }
   </style>
   <body>
