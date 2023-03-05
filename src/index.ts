@@ -1,6 +1,5 @@
 import http from "node:http";
 import { utils } from "./utils";
-import { store } from "./storage";
 import { fetchSong } from "./spotify/fetchSong";
 import { renderSpotifyComponent } from "./spotify/component";
 import { songEndpoint } from "./spotify/songEndpoint";
@@ -9,6 +8,8 @@ import { renderChatComponent } from "./chat/component";
 import { renderAdminChatComponent } from "./chat/admin/component";
 import { resolveAdminChatRequest } from "./chat/admin/resolveRequest";
 import { sendChatContactEmail } from "./chat/admin/contactEndpoint";
+import { storeMessage } from "./storage/messages-panel/storeMessage";
+import { renderMessagePanelComponent } from "./messages-panel/component";
 const hostname = "0.0.0.0";
 
 const server = http.createServer(async (req, res) => {
@@ -50,14 +51,13 @@ const server = http.createServer(async (req, res) => {
     let incomingMessage = utils.parseURL(req.url);
     let sanitizedMessage = utils.sanitizeString(incomingMessage);
     if (sanitizedMessage.length > 0) {
-      await store.storeMessage(sanitizedMessage);
+      await storeMessage({ content: sanitizedMessage });
     }
   }
-  let messagesComponent = await store.retriveMessages();
+  const chatComponent = renderChatComponent();
+  const messagePanelComponent = await renderMessagePanelComponent();
   const song = await fetchSong();
-
-  let spotifyComponent = renderSpotifyComponent(song);
-  let chatComponent = renderChatComponent();
+  const spotifyComponent = renderSpotifyComponent(song);
   // prettier-ignore
   const content =
     `
@@ -120,11 +120,7 @@ const server = http.createServer(async (req, res) => {
         ` + spotifyComponent + `
       </div>
       <main class="d-flex align-items-center h-100 p-4">
-        <div class="card w-100" style="height: 400px; overflow-y: auto; background-color: rgba(255, 255, 255, 0.1);">
-          <div class="card-body d-flex flex-column-reverse">
-          ` + messagesComponent + `
-          </div>
-        </div>
+        ` + messagePanelComponent + `
       </main>
     </div>
   </body>
