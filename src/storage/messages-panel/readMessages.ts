@@ -1,4 +1,5 @@
 import { readFile } from "fs/promises";
+import { logError } from "../../error-logger/errorLogger";
 import { message } from "../../messages-panel/message.model";
 export async function readMessages() {
   let messages: message[] = [];
@@ -8,7 +9,7 @@ export async function readMessages() {
     });
     messages = JSON.parse(messagesFile);
   } catch (error) {
-    //handle error
+    logError(error);
   }
   return messages;
 }

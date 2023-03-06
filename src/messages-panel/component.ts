@@ -1,3 +1,4 @@
+import { logError } from "../error-logger/errorLogger";
 import { readMessages } from "../storage/messages-panel/readMessages";
 export async function renderMessagePanelComponent() {
   let messagesHTML = "";
@@ -11,7 +12,7 @@ export async function renderMessagePanelComponent() {
       );
     }
   } catch (error) {
-    //handle error
+    logError(error);
   }
   /*prettier-ignore */
   return ( 

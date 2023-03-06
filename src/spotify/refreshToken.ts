@@ -3,6 +3,7 @@ import { RefreshTokenResponse } from "./refresh-token.model";
 import { SpotifyTokenRecord } from "./token.model";
 import { findEnvironmentVariable } from "./../utils/envVarHandler";
 import { env } from "node:process";
+import { logError } from "../error-logger/errorLogger";
 
 export async function refreshToken() {
   let token = null;
@@ -33,7 +34,7 @@ export async function refreshToken() {
     };
     storeSpotifyToken(spotifyToken);
   } catch (error) {
-    //handle error
+    logError(error);
   }
   return token;
 }

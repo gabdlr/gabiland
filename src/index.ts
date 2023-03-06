@@ -10,6 +10,7 @@ import { resolveAdminChatRequest } from "./chat/admin/resolveRequest";
 import { sendChatContactEmail } from "./chat/admin/contactEndpoint";
 import { storeMessage } from "./storage/messages-panel/storeMessage";
 import { renderMessagePanelComponent } from "./messages-panel/component";
+import { logError } from "./error-logger/errorLogger";
 const hostname = "0.0.0.0";
 
 const server = http.createServer(async (req, res) => {
@@ -32,6 +33,7 @@ const server = http.createServer(async (req, res) => {
       await sendChatContactEmail(req);
       return res.end(JSON.stringify({ response: "ok" }));
     } catch (error) {
+      logError(error);
       res.statusCode = 400;
       return res.end(JSON.stringify({ error }));
     }
@@ -44,8 +46,8 @@ const server = http.createServer(async (req, res) => {
       if (file) {
         return file;
       }
-    } catch (e) {
-      //handle error
+    } catch (error) {
+      logError(error);
     }
   } else if (req.url && req.url.length > 1 && !filterRequest(req.url)) {
     let incomingMessage = utils.parseURL(req.url);

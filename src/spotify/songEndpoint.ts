@@ -1,4 +1,5 @@
 import { ServerResponse } from "http";
+import { logError } from "../error-logger/errorLogger";
 import { fetchSong } from "./fetchSong";
 import { Album, Artist } from "./song-response.model";
 export async function songEndpoint(
@@ -15,7 +16,8 @@ export async function songEndpoint(
     } else {
       res.statusCode = 204;
     }
-  } catch (e) {
+  } catch (error) {
+    logError(error);
     res.statusCode = 500;
     response = { error: "Something went wrong" };
   }

@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises";
 import { cwd } from "process";
+import { logError } from "../error-logger/errorLogger";
 
 export async function findEnvironmentVariable(variable: string) {
   let envVarValue = "";
@@ -7,7 +8,7 @@ export async function findEnvironmentVariable(variable: string) {
     const file = (await readFile(`${cwd()}/.env`)).toString();
     envVarValue = searchTextInFile(file, variable);
   } catch (error) {
-    //handle error
+    logError(error);
   }
   return envVarValue;
 

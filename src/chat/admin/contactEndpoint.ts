@@ -1,6 +1,7 @@
 const sg = require("@sendgrid/mail");
 import { IncomingMessage } from "http";
 import { env } from "process";
+import { logError } from "../../error-logger/errorLogger";
 import { findEnvironmentVariable } from "./../../utils/envVarHandler";
 import { getRequestBody } from "./../../utils/getRequestBody";
 export async function sendChatContactEmail(request: IncomingMessage) {
@@ -26,6 +27,10 @@ export async function sendChatContactEmail(request: IncomingMessage) {
       text: "One new message!",
       html: `Ambassador!, access through this <a href='${URL}/admin/chat?room=${roomNumber}&token=${adminChatToken}'>link</a>`,
     };
-    sg.send(msg);
+    try {
+      await sg.send(msg);
+    } catch (error) {
+      logError(error);
+    }
   }
 }

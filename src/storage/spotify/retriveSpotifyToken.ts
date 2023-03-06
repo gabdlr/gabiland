@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { logError } from "../../error-logger/errorLogger";
 import { SpotifyTokenRecord } from "./../../spotify/token.model";
 import { storeSpotifyToken } from "./storeSpotifyToken";
 export async function retriveSpotifyToken() {
@@ -13,8 +14,9 @@ export async function retriveSpotifyToken() {
     const storedTokenJson: SpotifyTokenRecord = JSON.parse(storedToken);
     spotifyToken.token = storedTokenJson.token;
     spotifyToken.createdAt = new Date(storedTokenJson.createdAt);
-  } catch (e) {
+  } catch (error) {
     storeSpotifyToken(spotifyToken);
+    logError(error);
   }
   return spotifyToken;
 }
