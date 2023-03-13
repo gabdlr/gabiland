@@ -118,7 +118,7 @@ const server = http.createServer(async (req, res) => {
     ` + chatComponent + `
     </div>
     <div class="container vh-100">
-      <div class="navbar fixed-top" style="min-height: 70px;" id="spotifyContainer">
+      <div class="navbar fixed-top" id="spotifyPlaceholder">
         ` + spotifyComponent + `
       </div>
       <main class="d-flex align-items-center h-100 p-4">

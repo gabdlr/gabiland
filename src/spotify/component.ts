@@ -2,6 +2,8 @@ import { Song } from "./Song";
 
 export function renderSpotifyComponent(song: Song | null) {
   let artistEl = "";
+  let template: string | null = null;
+
   if (song) {
     song.artist.map((artist, index) => {
       artistEl += `<a class="artist d-inline song-complementary-info-text m-0 me-1" href="${
@@ -10,7 +12,30 @@ export function renderSpotifyComponent(song: Song | null) {
         index + 1 < song.artist.length ? "," : ""
       }</a>`;
     });
+
+    //prettier-ignore
+    template =
+      `
+    <div id="spotifyComponent" class="container-fluid">  
+      <div class="d-flex">
+        <div class="me-2">
+          <a href="${song.trackURL ?? " "}" id="spotifyAlbumHref" target="blank">
+            <img height="64px" width="64px" alt="Album image" src="${song.albumImageUrl ?? " "}" id="spotifyAlbumImage">
+          </a>
+        </div>
+        <div class="d-flex flex-column justify-content-center">
+          <a href="${song.albumURL ?? " "}" class="song-title-text" target="blank" id="spotifyTrack">
+            ${song.name ?? " "}
+          </a>
+          <div class="d-flex flex-row flex-wrap" id="spotifyArtist">
+          ` + artistEl + `
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
   }
+
   return (
     `
     <style>
@@ -32,7 +57,7 @@ export function renderSpotifyComponent(song: Song | null) {
       .song-title-text:hover, .song-complementary-info-text:hover{
         text-decoration: underline;
       }
-      #spotifyComponent {
+      #spotifyComponentContainer {
         height: 0px;
         overflow: hidden;
         visibility: hidden;
@@ -54,7 +79,7 @@ export function renderSpotifyComponent(song: Song | null) {
       
         95% {
           visibility: visible;
-          height: 70px;
+          height: 60px;
         }
       
         100% {
@@ -76,35 +101,16 @@ export function renderSpotifyComponent(song: Song | null) {
       }  
     </style>
 
-    <section class="navbar fixed-top" style="background-color: #181818; border-bottom: 1px solid #282828;" id="spotifyComponent">
-      <div id="spotifyComponentContainer" class="container-fluid">  
-            <div class="d-flex">
-              <div class="me-2">
-                <a href="${
-                  song?.trackURL ?? " "
-                }" id="spotify-album-href"><img height="64px" width="64px" alt="Album image" src="${
-      song?.albumImageUrl ?? " "
-    }" target="blank" id="spotify-album-image"></img></a>
-              </div>
-              <div class="d-flex flex-column justify-content-center">
-                <a href="${
-                  song?.albumURL ?? " "
-                }" class="song-title-text" target="blank" id="spotify-track">${
-      song?.name ?? " "
-    }</a>
-                <div class="d-flex flex-row flex-wrap" id="spotify-artist">
-                ` +
-    artistEl +
-    `</div>
-            </div>
-          </div>
-      </div>
+    <section class="navbar fixed-top slide-down" style="background-color: #181818; border-bottom: 1px solid #282828;" id="spotifyComponentContainer">
+      ` +
+    template +
+    `    
     </section>
     <script>
     document.addEventListener('DOMContentLoaded', () =>{
       let blurDate;
       let focusDate; 
-    
+
       function fetchNextSong(timeToNextSong) {
         setTimeout(() => {
           fetch("/song")
@@ -124,41 +130,113 @@ export function renderSpotifyComponent(song: Song | null) {
             });
         }, timeToNextSong);
       }
+
+      function assembleArtistElement(song){
+        return song.song.artist.map((artist, index) => {
+          const artistRef = document.createElement("a");
+          artistRef.setAttribute("href", artist.external_urls.spotify);
+          artistRef.setAttribute("target","blank");
+          artistRef.classList.add("artist", "song-complementary-info-text", "m-0", "me-1");
+          artistRef.innerText =
+            artist.name + (index + 1 !== song.song.artist.length ? "," : "");
+          return artistRef;
+        });
+      }
+
+      function resolveSongAlbum(song) {
+        let albumImageUrl = song.song.album.images.find((imageURL) => imageURL.width === 64)?.url;
+        if (!albumImageUrl) albumImageUrl = song.song.album.images[0].url ?? "";
+        return albumImageUrl
+      }
+
+      function renderSpotifyComponent(song) {
+        const spotifyComponentContainer = document.getElementById('spotifyComponentContainer');
+        const spotifyComponent = document.createElement("div");
+        spotifyComponent.setAttribute("id", "spotifyComponent");
+        spotifyComponent.classList.add("container-fluid");
+        
+        const flexDiv = document.createElement("div");
+        flexDiv.classList.add("d-flex");
+        const flexDivFirstChild = document.createElement("div");
+        flexDivFirstChild.classList.add("me-2");
+        
+        const imageLink = document.createElement("a");
+        imageLink.setAttribute("href", song.song.trackURL);
+        imageLink.setAttribute("id", "spotifyAlbumHref");
+        imageLink.setAttribute("target", "blank");
+        
+        const imageElement = document.createElement("img");
+        imageElement.setAttribute("height", "64px");
+        imageElement.setAttribute("width", "64px");
+        imageElement.setAttribute("alt", "Album image");
+        let albumImageUrl = resolveSongAlbum(song);
+        imageElement.setAttribute("src", albumImageUrl);
+        
+        imageElement.setAttribute("id", "spotifyAlbumImage");
+        imageLink.appendChild(imageElement);
+        flexDivFirstChild.appendChild(imageLink);
+        
+        const flexDivSecondChild = document.createElement("div");
+        flexDivSecondChild.classList.add("d-flex", "flex-column", "justify-content-center");
+        
+        const songTitleLink = document.createElement("a");
+        songTitleLink.classList.add("song-title-text");
+        songTitleLink.setAttribute("href", song.song.albumURL);
+        songTitleLink.setAttribute("target", "blank");
+        songTitleLink.setAttribute("id", "spotifyTrack");
+        songTitleLink.innerText = song.song.name;
+        flexDivSecondChild.appendChild(songTitleLink);
+        
+        const artistDiv = document.createElement("div");
+        artistDiv.classList.add("d-flex", "flex-row", "flex-wrap");
+        artistDiv.setAttribute("id", "spotifyArtist");
+        const artistEl = assembleArtistElement(song);
+        artistEl.forEach((artist) => artistDiv.appendChild(artist));
+        flexDivSecondChild.appendChild(artistDiv);
+        flexDiv.appendChild(flexDivFirstChild);
+        flexDiv.appendChild(flexDivSecondChild);
+        spotifyComponent.appendChild(flexDiv);
+        spotifyComponentContainer.appendChild(spotifyComponent);
+      }
   
       function syncSpotifyComponent(song) {
+        const spotifyComponentContainer = document.getElementById('spotifyComponentContainer');
+        const spotifyComponent = document.getElementById('spotifyComponent');
         if(!song || song.error){
-          if(spotifyComponent.classList.contains("slide-down")){
-            //removes div if present
-            spotifyComponent.classList.add("slide-up");
-            spotifyComponent.classList.remove("slide-down");
+          if(spotifyComponentContainer.classList.contains("slide-down")){
+            spotifyComponentContainer.classList.add("slide-up");
+            spotifyComponentContainer.classList.remove("slide-down");
+            if(spotifyComponent) spotifyComponentContainer.removeChild(spotifyComponent);
           }
           return;
         }
-
-        //shows div
-        spotifyComponent.classList.add("slide-down");
-        spotifyComponent.classList.remove("slide-up");
-
-        //updates image
-        document.getElementById("spotify-album-href")?.setAttribute("href", song.song.trackURL);
-        let albumImageUrl = song.song.album.images.find((imageURL) => imageURL.width === 64)?.url;
-        if (!albumImageUrl) albumImageUrl = song.song.album.images[0].url ?? "";
-        document.getElementById("spotify-album-image")?.setAttribute("src", albumImageUrl);
-  
-        //updates song title
-        document.getElementById("spotify-track").innerText = song.song.name;
-        document.getElementById("spotify-track")?.setAttribute("href", song.song.album.external_urls.spotify);
         
-        //updates artists
-        document.querySelectorAll(".artist").forEach((node) => node.remove());
-        song.song.artist.forEach((artist, index) => {
-          let artistRef = document.createElement("a");
-          artistRef.setAttribute("href", artist.external_urls.spotify);
-          artistRef.classList.add("artist", "song-complementary-info-text", "m-0", "me-1");
-          artistRef.innerText = artist.name + (index + 1 !== song.song.artist.length ? "," : "");
-          document.getElementById("spotify-artist").appendChild(artistRef);
-        });
+        if(!spotifyComponent){
+          renderSpotifyComponent(song);
+        }else{
+          const artistNodes = document.querySelectorAll(".artist");
+          const spotifyAlbumHref = document.getElementById("spotifyAlbumHref");
+          const spotifyAlbumImage = document.getElementById("spotifyAlbumImage");
+          const spotifyArtist = document.getElementById("spotifyArtist");
+          const spotifyTrack = document.getElementById("spotifyTrack");
+          
+          spotifyAlbumHref.setAttribute("href", song.song.trackURL);
+          let albumImageUrl = resolveSongAlbum(song);
+          spotifyAlbumImage.setAttribute("src", albumImageUrl);
+    
+          spotifyTrack.innerText = song.song.name;
+          spotifyTrack.setAttribute("href", song.song.album.external_urls.spotify); 
+
+          artistNodes.forEach((node) => node.remove());
+          const artistEl = assembleArtistElement(song);
+          artistEl.forEach((artist) => spotifyArtist.appendChild(artist));
+        }
+
+        spotifyComponentContainer.classList.add("slide-down");
+        spotifyComponentContainer.classList.remove("slide-up");
+
       }
+      
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === 'visible') {
           focusDate = new Date();
@@ -177,7 +255,7 @@ export function renderSpotifyComponent(song: Song | null) {
               song?.duration * 1000 - song?.playingSecond * 1000 === 0
                 ? 60000
                 : song?.duration * 1000 - song?.playingSecond * 1000
-            });spotifyComponent.classList.add("slide-down");`
+            });`
           : `fetchNextSong(60000); syncSpotifyComponent(null);`
       }
     });
