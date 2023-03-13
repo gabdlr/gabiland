@@ -2,7 +2,7 @@ import { Song } from "./Song";
 
 export function renderSpotifyComponent(song: Song | null) {
   let artistEl = "";
-  let template: string | null = null;
+  let template = "";
 
   if (song) {
     song.artist.map((artist, index) => {
@@ -101,7 +101,7 @@ export function renderSpotifyComponent(song: Song | null) {
       }  
     </style>
 
-    <section class="navbar fixed-top slide-down" style="background-color: #181818; border-bottom: 1px solid #282828;" id="spotifyComponentContainer">
+    <section class="navbar fixed-top" style="background-color: #181818; border-bottom: 1px solid #282828;" id="spotifyComponentContainer">
       ` +
     template +
     `    
@@ -151,6 +151,7 @@ export function renderSpotifyComponent(song: Song | null) {
 
       function renderSpotifyComponent(song) {
         const spotifyComponentContainer = document.getElementById('spotifyComponentContainer');
+        if(spotifyComponentContainer.firstChild) spotifyComponentContainer.removeChild(spotifyComponentContainer.firstChild);
         const spotifyComponent = document.createElement("div");
         spotifyComponent.setAttribute("id", "spotifyComponent");
         spotifyComponent.classList.add("container-fluid");
@@ -255,7 +256,7 @@ export function renderSpotifyComponent(song: Song | null) {
               song?.duration * 1000 - song?.playingSecond * 1000 === 0
                 ? 60000
                 : song?.duration * 1000 - song?.playingSecond * 1000
-            });`
+            });document.getElementById('spotifyComponentContainer').classList.add("slide-down")`
           : `fetchNextSong(60000); syncSpotifyComponent(null);`
       }
     });
