@@ -110,25 +110,10 @@ export function renderSpotifyComponent(song: Song | null) {
     document.addEventListener('DOMContentLoaded', () =>{
       let blurDate;
       let focusDate; 
-
-      function fetchNextSong(timeToNextSong) {
-        setTimeout(() => {
-          fetch("/song")
-            .then((response) => response.json())
-            .then((response) => {
-              syncSpotifyComponent(response);
-              if(response.error){
-                return fetchNextSong(60000)
-              }
-              let timeToNextSong = response.song?.duration  - response.song?.playingSecond;
-              if(timeToNextSong === 0) timeToNextSong = 30000;
-              return fetchNextSong(timeToNextSong);
-            }).catch((e)=>{
-              let error = {error: e} 
-              syncSpotifyComponent(null);
-              fetchNextSong(60000)
-            });
-        }, timeToNextSong);
+      const spotifyWorker = new Worker("spotifyWorker.ts");
+      spotifyWorker.onmessage = (response,fn=syncSpotifyComponent) => {
+        let song = response.data;
+        fn(song);
       }
 
       function assembleArtistElement(song){
@@ -243,7 +228,7 @@ export function renderSpotifyComponent(song: Song | null) {
           focusDate = new Date();
           if(blurDate){
             if(focusDate.getTime() - blurDate.getTime() >= 60000){
-              fetchNextSong(1);
+              spotifyWorker.postMessage(1);
             }
           }
         }else {
@@ -252,12 +237,12 @@ export function renderSpotifyComponent(song: Song | null) {
       });
       ${
         song
-          ? `fetchNextSong(${
+          ? `spotifyWorker.postMessage(${
               song?.duration * 1000 - song?.playingSecond * 1000 === 0
                 ? 60000
                 : song?.duration * 1000 - song?.playingSecond * 1000
             });document.getElementById('spotifyComponentContainer').classList.add("slide-down")`
-          : `fetchNextSong(60000); syncSpotifyComponent(null);`
+          : `spotifyWorker.postMessage(60000); syncSpotifyComponent(null);`
       }
     });
   </script>

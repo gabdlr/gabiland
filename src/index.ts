@@ -11,6 +11,7 @@ import { sendChatContactEmail } from "./chat/admin/contactEndpoint";
 import { storeMessage } from "./storage/messages-panel/storeMessage";
 import { renderMessagePanelComponent } from "./messages-panel/component";
 import { logError } from "./error-logger/errorLogger";
+import { spotifyWorker } from "./spotify/spotifyWorker";
 const hostname = "0.0.0.0";
 
 const server = http.createServer(async (req, res) => {
@@ -37,6 +38,9 @@ const server = http.createServer(async (req, res) => {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error }));
     }
+  } else if (req.url === "/spotifyWorker.ts") {
+    res.setHeader("Content-Type", "application/javascript");
+    return res.end(spotifyWorker);
   } else if (
     req.url &&
     new RegExp(/\/assets\/+(\/[\w]\/)*([\w\.\w])+/).test(req.url)
