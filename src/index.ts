@@ -38,6 +38,9 @@ const server = http.createServer(async (req, res) => {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error }));
     }
+  } else if (req.url === "/robots.txt") {
+    res.setHeader("Content-Type", "text/plain");
+    return res.end(`User-agent: *\nDisallow: /assets`);
   } else if (req.url === "/spotifyWorker.ts") {
     res.setHeader("Content-Type", "application/javascript");
     return res.end(spotifyWorker);
