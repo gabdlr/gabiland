@@ -11,5 +11,7 @@ export async function logError(error: unknown) {
     html: errorString,
   };
   storeErrorLog(errorString);
-  sendMail(email);
+  sendMail(email).catch(() => {
+    //handle error
+  });
 }
