@@ -56,11 +56,16 @@ const server = http.createServer(async (req, res) => {
     } catch (error) {
       logError(error);
     }
-  } else if (req.url && req.url.length > 1 && !filterRequest(req.url)) {
-    let incomingMessage = utils.parseURL(req.url);
+  } else if (req.url?.startsWith("/mensaje=") && !filterRequest(req.url)) {
+    const message = req.url.split("=")[1];
+    let incomingMessage = utils.parseURL(message);
     let sanitizedMessage = utils.sanitizeString(incomingMessage);
     if (sanitizedMessage.length > 0) {
-      await storeMessage({ content: sanitizedMessage });
+      try {
+        await storeMessage({ content: sanitizedMessage });
+      } catch (error) {
+        logError(error);
+      }
     }
   }
   const chatComponent = renderChatComponent();
