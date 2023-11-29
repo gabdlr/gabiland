@@ -1,5 +1,5 @@
 export const spotifyWorker = `
-onmessage = (time) => fetchNextSong((time = 60000));
+onmessage = (time) => fetchNextSong((time));
 
 function fetchNextSong(timeToNextSong) {
   setTimeout(() => {
