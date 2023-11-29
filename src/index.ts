@@ -1,6 +1,5 @@
 import http from "node:http";
 import { utils } from "./utils";
-import { fetchSong } from "./spotify/fetchSong";
 import { renderSpotifyComponent } from "./spotify/component";
 import { songEndpoint } from "./spotify/songEndpoint";
 import { filterRequest } from "./utils/requestFilter";
@@ -70,8 +69,7 @@ const server = http.createServer(async (req, res) => {
   }
   const chatComponent = renderChatComponent();
   const messagePanelComponent = await renderMessagePanelComponent();
-  const song = await fetchSong();
-  const spotifyComponent = renderSpotifyComponent(song);
+  const spotifyComponent = renderSpotifyComponent();
   // prettier-ignore
   const content =
     `
@@ -130,9 +128,7 @@ const server = http.createServer(async (req, res) => {
     ` + chatComponent + `
     </div>
     <div class="container vh-100">
-      <div class="navbar fixed-top" id="spotifyPlaceholder">
         ` + spotifyComponent + `
-      </div>
       <main class="d-flex align-items-center h-100 p-4">
         ` + messagePanelComponent + `
       </main>
