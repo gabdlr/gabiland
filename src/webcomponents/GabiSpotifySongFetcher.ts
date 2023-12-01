@@ -43,4 +43,8 @@ class GabiSpotifySongFetcher extends HTMLElement {
       }
     });
   }
+
+  disconnectedCallback() {
+    this.spotifyWorker.terminate();
+  }
 }

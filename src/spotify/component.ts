@@ -120,7 +120,11 @@ export function renderSpotifyComponent() {
               }
           });
       }
+      disconnectedCallback() {
+          this.spotifyWorker.terminate();
+      }
   }
+  
     
       class GabiSpotifyPresenter extends HTMLElement {
         constructor() {
