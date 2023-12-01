@@ -17,7 +17,15 @@ export async function renderMessagePanelComponent() {
   /*prettier-ignore */
   return ( 
   `
-  <div class="card w-100" style="height: 400px; overflow-y: auto; background-color: rgba(255, 255, 255, 0.1);">
+  <style>
+   .messages-container {
+    height: 400px; 
+    overflow-y: auto; 
+    background-color: transparent;
+    border: 0px;
+   }
+  </style>
+  <div class="card w-100 messages-container">
     <div class="card-body d-flex flex-column-reverse">
     ` + messagesHTML +`
     </div>
