@@ -12,24 +12,6 @@ export function renderSpotifyComponent() {
   return (
     `
     <style>
-      .song-title-text {
-        font-size: 0.8125rem;
-        color: #fff;
-      }
-      .song-complementary-info-text {
-        font-size: 0.6875rem;
-        color: #b3b3b3;
-      }
-      .song-title-text, .song-complementary-info-text{
-        font-family: CircularSp,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,sans-serif;
-        margin-block: 0px;
-        -webkit-tap-highlight-color: transparent;
-        text-decoration: none;
-        font-weight: 400;
-      }
-      .song-title-text:hover, .song-complementary-info-text:hover{
-        text-decoration: underline;
-      }
       #spotifyComponentContainer {
         height: 0px;
         overflow: hidden;
