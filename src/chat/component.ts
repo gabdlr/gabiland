@@ -2,12 +2,12 @@ import { chatStyles } from "./styles";
 export function renderChatComponent() {
   return `
   ${chatStyles}
-  <div id="chatContainer" class="d-flex justify-content-center chat-container">
+  <div id="chatContainer" class="d-flex justify-content-center chat-container flex-column">
+  <div class="d-flex flex-row justify-content-between p-3 chat-header chat-title">
+    <span class="font-weight-light">Gabiland's embassy</span>
+    <span class="chat-close" aria-pressed="false" role="button" onclick="toggleChat()">X</span>
+  </div>
   <div class="card">
-    <div class="d-flex flex-row justify-content-between p-3 chat-header chat-title">
-      <span class="font-weight-light">Gabiland's embassy</span>
-      <span class="chat-close" aria-pressed="false" role="button" onclick="toggleChat()">X</span>
-    </div>
     <div class="px-2 chat-body">
     </div> 
     <div class="form-group p-2 pt-0">

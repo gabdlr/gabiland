@@ -1,16 +1,22 @@
 export const chatStyles = `
 <style>
+:root{
+  --chat-lighten-color: rgb(13 28 47);
+  --chat-darken-color: rgb(12 14 22);
+  --chat-bg-heading-start: var(--chat-lighten-color);
+  --chat-bg-heading-end: var(--chat-darken-color);
+}
 #chatContainer .chat-body::-webkit-scrollbar {
   width: 15px;
 }
 .contact-container #chatContainer .card{
-  width: 300px;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
   border: none;
-  border-radius: 15px;
+  b
 }
 #chatContainer .chat-header{
-  background: rgb(246,124,198);
-  background: linear-gradient(90deg, rgba(246,124,198,1) 0%, rgba(232,52,160,1) 74%);
+  background: linear-gradient(90deg, var(--chat-bg-heading-start) 0%, var(--chat-bg-heading-end) 74%);
   border-radius: 15px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
@@ -40,7 +46,7 @@ export const chatStyles = `
 #chatContainer .form-control:focus{
   box-shadow: none;
   outline: none !important;
-  border:1px solid #e71ad2;
+  border:1px solid var(--chat-darken-color);
 }
 #chatContainer .form-control::placeholder{
   font-size: 12px;
@@ -70,16 +76,16 @@ export const chatStyles = `
   border-bottom-left-radius: 0;
   border-top-right-radius: 50%;
   border-bottom-right-radius: 50%;
-  --bs-btn-hover-bg: #e71ad2;
-  --bs-btn-hover-border-color: #e71ad2;
-  --bs-btn-bg: #f577c3;
-  --bs-btn-border-color: #f577c3;
+  --bs-btn-hover-bg: var(--chat-darken-color);
+  --bs-btn-hover-border-color: var(--chat-darken-color);
+  --bs-btn-bg: var(--chat-lighten-color);
+  --bs-btn-border-color: var(--chat-lighten-color);
   --bs-btn-padding-x: 0;
 }
 
 .form-group .btn:active{
-  --bs-btn-active-bg: #e71ad2;
-  --bs-btn-active-border-color: #e71ad2;
+  --bs-btn-active-bg: var(--chat-darken-color);
+  --bs-btn-active-border-color: var(--chat-darken-color);
 }
 
 .contact-container {
