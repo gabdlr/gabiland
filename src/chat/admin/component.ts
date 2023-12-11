@@ -1,4 +1,4 @@
-export function renderAdminChatComponent(chatRoomId: number) {
+export function renderAdminChatComponent(chatRoomId: string) {
   return `
   <!DOCTYPE html>
   <html lang="es">
@@ -154,7 +154,7 @@ export function renderAdminChatComponent(chatRoomId: number) {
 
     const CLIENT_ID = 'IMWtB9IIGdCktA3W';
     const drone = new ScaleDrone(CLIENT_ID, {});
-    const roomName = 'observable-'+${chatRoomId};
+    const roomName = 'observable-${chatRoomId}';
     
     drone.on('open', error => {
       if (error) {

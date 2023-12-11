@@ -19,7 +19,7 @@ const server = http.createServer(async (req, res) => {
   if (req.url?.includes("/admin/chat")) {
     const room = await resolveAdminChatRequest(req.url);
     if (room) {
-      const content = renderAdminChatComponent(+room);
+      const content = renderAdminChatComponent(room);
       return res.end(content);
     }
   }
