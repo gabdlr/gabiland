@@ -563,10 +563,8 @@ const server = http.createServer(async (req, res) => {
       </main>
     </div>
   </body>
-  <script>
-  document.addEventListener('DOMContentLoaded', () =>{ 
+  <script defer>
     history.pushState({prev:window.location.pathname},'','/');
-  });
   </script>
   </html>
   `;
