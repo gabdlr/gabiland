@@ -81,6 +81,7 @@ const server = http.createServer(async (req, res) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index,nofollow,noarchive" />
     <meta name="description" content="A web developer website">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none'; script-src https://cdn.scaledrone.com/scaledrone.min.js 'sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD' 'sha256-jK6djtSW2GBWDR2mgWXg3mGgmUEpboZ+niRdFTcegkE=' 'sha256-cVWV+ufzWzKbw76SVFA/i9btZW+y9iN7M6pko4ofbx0=' 'sha256-6Q6yBf8/Gy703q/Y6LNtxeFljxkmx5A+grWgVBItGRc='; style-src-elem https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css 'sha256-qohxvzGgle8ZI1Li1v+jlVCbRGQnRvefhSKktozkdC4=' 'sha256-jhP/dH4ff2+hPwGS8vUcAp5UMAjtEJgAb5APj7QU0lQ=' 'sha256-cL+2ZKwrchTEtB3yxULSkWB9Rh+4bqgl8uj/1grE6UM=' 'sha256-KrlMPa9abG8YOpIMmOW3WYLBEGX8AIlmLTBYJONd35c=' 'sha256-hXNaqiudiiSXQ9Xw9Uoh1iC2Dz+eewerfcBqb9HB1uI=' 'sha256-S4byS61Je0bwKBrxuzmHx3P2cYz+sJbYHVlEQky1Qmw='; worker-src 'self'; connect-src 'self' wss://api.scaledrone.com/v3/websocket;" />
     <title>Gabiland Republic</title>
     <link rel="preconnect" href="wss://api.scaledrone.com/v3/websocket">
     <link rel="preconnect" href="https://res.cloudinary.com">
