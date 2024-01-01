@@ -869,5 +869,4 @@ class GabiChatPresenter extends HTMLElement {
     });
   }
 }
-
 customElements.define("gabi-chat-presenter", GabiChatPresenter);

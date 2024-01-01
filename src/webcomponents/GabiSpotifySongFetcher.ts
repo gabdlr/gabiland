@@ -48,3 +48,4 @@ class GabiSpotifySongFetcher extends HTMLElement {
     this.spotifyWorker.terminate();
   }
 }
+customElements.define("gabi-spotify-song-fetcher", GabiSpotifySongFetcher);

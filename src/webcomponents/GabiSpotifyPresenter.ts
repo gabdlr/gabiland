@@ -190,3 +190,4 @@ class GabiSpotifyPresenter extends HTMLElement {
     }
   }
 }
+customElements.define("gabi-spotify-presenter", GabiSpotifyPresenter);
