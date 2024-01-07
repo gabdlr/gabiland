@@ -4,6 +4,77 @@ class GabiChatPresenter extends HTMLElement {
     constructor() {
         super();
         this.chatWrapper = null;
+        this._elementBuilder = {
+            assemble(element, classes = [], attributes = []) {
+                if (classes.length > 0)
+                    element.classList.add(...classes);
+                if (attributes.length > 0) {
+                    attributes.forEach((attr) => element.setAttribute(attr.qualifiedName, attr.value));
+                }
+                return element;
+            },
+            builders: {
+                div: {
+                    build() {
+                        return document.createElement("div");
+                    },
+                },
+                span: {
+                    build() {
+                        return document.createElement("span");
+                    },
+                },
+                form: {
+                    build() {
+                        return document.createElement("form");
+                    },
+                },
+                input: {
+                    build() {
+                        return document.createElement("input");
+                    },
+                },
+                button: {
+                    build() {
+                        return document.createElement("button");
+                    },
+                },
+                svg: {
+                    build() {
+                        return document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    },
+                },
+                g: {
+                    build() {
+                        return document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    },
+                },
+                path: {
+                    build() {
+                        return document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    },
+                },
+            },
+            //@ts-ignore
+            build(elementType, classes, attributes) {
+                let element = this.builders[elementType].build();
+                element = this.assemble(element, classes, attributes);
+                return element;
+            },
+            //@ts-ignore
+            buildCollection(elementType, classes, attributes, qty = 1) {
+                const elements = [];
+                for (let i = 0, j = qty; i < j; i++) {
+                    let element = this.builders[elementType].build();
+                    element = this.assemble(element, classes, attributes);
+                    elements.push(element);
+                }
+                return elements;
+            },
+            attributeFactory(qualifiedName, value) {
+                return { qualifiedName, value };
+            },
+        };
         this.attachShadow({ mode: "open" });
     }
     connectedCallback() {
@@ -326,16 +397,15 @@ class GabiChatPresenter extends HTMLElement {
       color: var(--bs-secondary-color)!important;
     }
     \`;
-        const container = document.createElement("div");
-        container.setAttribute("id", "chatContainer");
         const containerClasses = [
             "d-flex",
             "justify-content-center",
             "chat-container",
             "flex-column",
         ];
-        container.classList.add(...containerClasses);
-        const header = document.createElement("div");
+        const container = this._elementBuilder.build("div", containerClasses, [
+            this._elementBuilder.attributeFactory("id", "chatContainer"),
+        ]);
         const headerClasses = [
             "d-flex",
             "flex-row",
@@ -344,71 +414,70 @@ class GabiChatPresenter extends HTMLElement {
             "chat-header",
             "chat-title",
         ];
-        header.classList.add(...headerClasses);
-        const headerTitle = document.createElement("span");
+        const header = this._elementBuilder.build("div", headerClasses);
         const headerTitleClasses = ["font-weight-light"];
-        headerTitle.classList.add(...headerTitleClasses);
+        const headerTitle = this._elementBuilder.build("span", headerTitleClasses);
         headerTitle.innerText = CHAT_TITLE_TEXT;
-        const headerCloseButton = document.createElement("span");
         const headerCloseButtonClasses = ["chat-close"];
-        headerCloseButton.classList.add(...headerCloseButtonClasses);
-        headerCloseButton.setAttribute("aria-pressed", "false");
-        headerCloseButton.setAttribute("role", "button");
+        const headerCloseButton = this._elementBuilder.build("span", headerCloseButtonClasses, [
+            this._elementBuilder.attributeFactory("aria-pressed", "false"),
+            this._elementBuilder.attributeFactory("role", "button"),
+        ]);
         headerCloseButton.onclick = () => this.closeChat();
         headerCloseButton.innerText = "X";
         header.appendChild(headerTitle);
         header.appendChild(headerCloseButton);
-        const bodyContainer = document.createElement("div");
         const bodyContainerClasses = ["card"];
-        bodyContainer.classList.add(...bodyContainerClasses);
-        const body = document.createElement("div");
+        const bodyContainer = this._elementBuilder.build("div", bodyContainerClasses);
         const bodyClasses = ["px-2", "chat-body"];
-        body.classList.add(...bodyClasses);
-        body.setAttribute("id", "chatBody");
-        const footer = document.createElement("div");
+        const body = this._elementBuilder.build("div", bodyClasses, [
+            this._elementBuilder.attributeFactory("id", "chatBody"),
+        ]);
         const footerClasses = ["form-group", "p-2", "pt-0"];
-        footer.classList.add(...footerClasses);
-        const footerForm = document.createElement("form");
-        footerForm.setAttribute("id", "chatForm");
-        const footerFormContent = document.createElement("div");
+        const footer = this._elementBuilder.build("div", footerClasses);
+        const footerForm = this._elementBuilder.build("form", void 0, [
+            this._elementBuilder.attributeFactory("id", "chatForm"),
+        ]);
         const footerFormContentClasses = ["d-flex"];
-        footerFormContent.classList.add(...footerFormContentClasses);
-        const footerFormContentInputChatInput = document.createElement("input");
+        const footerFormContent = this._elementBuilder.build("div", footerFormContentClasses);
         const footerFormContentInputChatInputClasses = ["form-control"];
-        footerFormContentInputChatInput.classList.add(...footerFormContentInputChatInputClasses);
-        footerFormContentInputChatInput.setAttribute("id", "chatInput");
-        footerFormContentInputChatInput.setAttribute("placeholder", CHAT_INPUT_PLACEHOLDER);
+        const footerFormContentInputChatInput = this._elementBuilder.build("input", footerFormContentInputChatInputClasses, [
+            this._elementBuilder.attributeFactory("id", "chatInput"),
+            this._elementBuilder.attributeFactory("placeholder", CHAT_INPUT_PLACEHOLDER),
+        ]);
         footerFormContentInputChatInput.disabled = true;
-        const footerFormContentButton = document.createElement("button");
         const footerFormContentButtonClasses = ["btn", "btn-success"];
-        footerFormContentButton.classList.add(...footerFormContentButtonClasses);
+        const footerFormContentButton = this._elementBuilder.build("button", footerFormContentButtonClasses);
         footerFormContentButton.type = "submit";
-        const footerFormContentButtonSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        footerFormContentButtonSvg.setAttribute("width", "30px");
-        footerFormContentButtonSvg.setAttribute("height", "30px");
-        footerFormContentButtonSvg.setAttribute("viewBox", "0 0 400 400");
-        footerFormContentButtonSvg.setAttribute("fill", "none");
-        footerFormContentButtonSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        const footerFormContentButtonSvgFirstGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        footerFormContentButtonSvgFirstGEl.setAttribute("id", "SVGRepo_bgCarrier");
-        footerFormContentButtonSvgFirstGEl.setAttribute("stroke-width", "0");
-        const footerFormContentButtonSvgSecondGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        footerFormContentButtonSvgSecondGEl.setAttribute("id", "SVGRepo_tracerCarrier");
-        footerFormContentButtonSvgSecondGEl.setAttribute("stroke-linecap", "round");
-        footerFormContentButtonSvgSecondGEl.setAttribute("stroke-linejoin", "round");
-        const footerFormContentButtonSvgThirdGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        footerFormContentButtonSvgThirdGEl.setAttribute("id", "SVGRepo_iconCarrier");
-        const footerFormContentButtonSvgThirdGElPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        footerFormContentButtonSvgThirdGElPath.setAttribute("d", "M165.865 345C67.4268 338.855 27.5031 77.085 213.503 69.1662C405.382 60.997 340.806 357.21 197.786 260.179C147.022 225.723 192.405 137.4 241.736 158.785");
-        footerFormContentButtonSvgThirdGElPath.setAttribute("stroke", "#fafafa");
-        footerFormContentButtonSvgThirdGElPath.setAttribute("stroke-opacity", "0.9");
-        footerFormContentButtonSvgThirdGElPath.setAttribute("stroke-width", "16");
-        footerFormContentButtonSvgThirdGElPath.setAttribute("stroke-linecap", "round");
-        footerFormContentButtonSvgThirdGElPath.setAttribute("stroke-linejoin", "round");
-        footerFormContentButtonSvgThirdGEl.appendChild(footerFormContentButtonSvgThirdGElPath);
-        footerFormContentButtonSvg.appendChild(footerFormContentButtonSvgFirstGEl);
-        footerFormContentButtonSvg.appendChild(footerFormContentButtonSvgSecondGEl);
-        footerFormContentButtonSvg.appendChild(footerFormContentButtonSvgThirdGEl);
+        const footerFormContentButtonSvg = this._elementBuilder.build("svg", void 0, [
+            this._elementBuilder.attributeFactory("width", "30px"),
+            this._elementBuilder.attributeFactory("height", "30px"),
+            this._elementBuilder.attributeFactory("viewBox", "0 0 400 400"),
+            this._elementBuilder.attributeFactory("fill", "none"),
+            this._elementBuilder.attributeFactory("xmlns", "http://www.w3.org/2000/svg"),
+        ]);
+        const footerFormContentButtonSvgGElArray = this._elementBuilder.buildCollection("g", void 0, void 0, 3);
+        this._elementBuilder.assemble(footerFormContentButtonSvgGElArray[0], void 0, [
+            this._elementBuilder.attributeFactory("id", "SVGRepo_bgCarrier"),
+            this._elementBuilder.attributeFactory("stroke-width", "0"),
+        ]);
+        this._elementBuilder.assemble(footerFormContentButtonSvgGElArray[1], void 0, [
+            this._elementBuilder.attributeFactory("id", "SVGRepo_tracerCarrier"),
+            this._elementBuilder.attributeFactory("stroke-linecap", "round"),
+            this._elementBuilder.attributeFactory("stroke-linejoin", "round"),
+        ]);
+        this._elementBuilder.assemble(footerFormContentButtonSvgGElArray[2], void 0, [this._elementBuilder.attributeFactory("id", "SVGRepo_iconCarrier")]);
+        const footerFormContentButtonSvgThirdGElPath = this._elementBuilder.build("path");
+        this._elementBuilder.assemble(footerFormContentButtonSvgThirdGElPath, void 0, [
+            this._elementBuilder.attributeFactory("d", "M165.865 345C67.4268 338.855 27.5031 77.085 213.503 69.1662C405.382 60.997 340.806 357.21 197.786 260.179C147.022 225.723 192.405 137.4 241.736 158.785"),
+            this._elementBuilder.attributeFactory("stroke", "#fafafa"),
+            this._elementBuilder.attributeFactory("stroke-opacity", "0.9"),
+            this._elementBuilder.attributeFactory("stroke-width", "16"),
+            this._elementBuilder.attributeFactory("stroke-linecap", "round"),
+            this._elementBuilder.attributeFactory("stroke-linejoin", "round"),
+        ]);
+        footerFormContentButtonSvgGElArray[2].appendChild(footerFormContentButtonSvgThirdGElPath);
+        footerFormContentButtonSvgGElArray.forEach((el) => footerFormContentButtonSvg.appendChild(el));
         footerFormContentButton.appendChild(footerFormContentButtonSvg);
         footerFormContent.appendChild(footerFormContentInputChatInput);
         footerFormContent.appendChild(footerFormContentButton);
@@ -449,18 +518,18 @@ class GabiChatPresenter extends HTMLElement {
     createMessageEl(text, isVisitor = true) {
         const message = document.createElement("div");
         const messageBlock = document.createElement("div");
-        const messageIconWrapper = document.createElement("div");
         const messageIconWrapperClasses = ["d-flex", "no-wrap"];
-        messageIconWrapper.classList.add(...messageIconWrapperClasses);
+        const messageIconWrapper = this._elementBuilder.build("div", messageIconWrapperClasses);
         const messageTextWrapper = document.createElement("div");
-        const messageIconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        messageIconSvg.setAttribute("width", "30px");
-        messageIconSvg.setAttribute("height", "30px");
-        messageIconSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        messageIconSvg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-        messageIconSvg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-        messageIconSvg.setAttribute("aria-hidden", "true");
-        messageIconSvg.setAttribute("role", "img");
+        const messageIconSvg = this._elementBuilder.build("svg", void 0, [
+            this._elementBuilder.attributeFactory("width", "30px"),
+            this._elementBuilder.attributeFactory("height", "30px"),
+            this._elementBuilder.attributeFactory("xmlns", "http://www.w3.org/2000/svg"),
+            this._elementBuilder.attributeFactory("xmlns:xlink", "http://www.w3.org/1999/xlink"),
+            this._elementBuilder.attributeFactory("preserveAspectRatio", "xMidYMid meet"),
+            this._elementBuilder.attributeFactory("aria-hidden", "true"),
+            this._elementBuilder.attributeFactory("role", "img"),
+        ]);
         const messageSpanEl = document.createElement("span");
         messageSpanEl.innerText = text;
         messageTextWrapper.appendChild(messageSpanEl);
@@ -476,122 +545,149 @@ class GabiChatPresenter extends HTMLElement {
                 "justify-content-start",
                 "flex-row-reverse",
             ];
-            messageBlock.classList.add(...messageBlockClasses);
+            this._elementBuilder.assemble(messageBlock, messageBlockClasses);
             const messageIconSvgClasses = ["d-inline"];
-            messageIconSvg.classList.add(...messageIconSvgClasses);
-            messageIconSvg.setAttribute("viewBox", "0 0 512 512");
-            const messageIconSvgPathElArray = new Array(6)
-                .fill(null)
-                .map((_) => document.createElementNS("http://www.w3.org/2000/svg", "path"));
-            messageIconSvgPathElArray[0].setAttribute("fill", "#FFA1E0");
-            messageIconSvgPathElArray[0].setAttribute("d", "M440.978 323.425c3.819-14.914 5.852-30.544 5.852-46.649c0-103.524-83.926-187.46-187.46-187.46c-22.642 0-44.346 4.014-64.439 11.37c-39.597-53.207-108.116-71.15-117.883-62.258c-13.158 11.98-32.999 74.787-5.471 141.8c3.49 8.496 8.713 16.362 15.139 23.411c-9.532 22.473-14.806 47.189-14.806 73.136c0 16.106 2.033 31.735 5.852 46.649c-6.345 11.508-9.789 23.817-9.789 36.614c0 63.903 49.429 115.707 191.397 115.707s191.397-51.804 191.397-115.707c0-12.796-3.444-25.106-9.789-36.613z");
-            messageIconSvgPathElArray[1].setAttribute("fill", "#FFC7EF");
-            messageIconSvgPathElArray[1].setAttribute("d", "M259.37 299.192c-80.334 0-99.93 33.493-99.93 74.808c0 41.316 19.596 74.808 99.93 74.808S359.3 415.316 359.3 374c0-41.315-19.595-74.808-99.93-74.808z");
-            messageIconSvgPathElArray[2].setAttribute("fill", "#E583C9");
-            messageIconSvgPathElArray[2].setAttribute("d", "M228.347 366.537c0 14.532-7.888 26.312-17.617 26.312s-17.617-11.78-17.617-26.312s7.888-26.312 17.617-26.312s17.617 11.78 17.617 26.312zm79.664-26.312c-9.73 0-17.617 11.78-17.617 26.312s7.888 26.312 17.617 26.312s17.617-11.78 17.617-26.312s-7.888-26.312-17.617-26.312z");
-            messageIconSvgPathElArray[3].setAttribute("fill", "#2B3B47");
-            messageIconSvgPathElArray[3].setAttribute("d", "M376.812 230.085V271.805c0 13.985-11.337 25.321-25.321 25.321s-25.321-11.337-25.321-25.321V230.085c0-13.985 11.337-25.321 25.321-25.321s25.321 11.336 25.321 25.321zM167.25 204.763c-13.985 0-25.321 11.337-25.321 25.321V271.804c0 13.985 11.337 25.321 25.321 25.321s25.321-11.337 25.321-25.321v-41.719c0-13.985-11.337-25.322-25.321-25.322zm43.48 144.092c-9.73 0-17.617 11.78-17.617 26.312s7.888 26.312 17.617 26.312s17.617-11.78 17.617-26.312s-7.887-26.312-17.617-26.312zm97.281 0c-9.73 0-17.617 11.78-17.617 26.312s7.888 26.312 17.617 26.312s17.617-11.78 17.617-26.312s-7.888-26.312-17.617-26.312z");
-            messageIconSvgPathElArray[4].setAttribute("fill", "#E583C9");
-            messageIconSvgPathElArray[4].setAttribute("d", "M93.158 182.158c-20.737-50.48-9.529-93.588.383-102.612c6.398-5.825 46.27 3.638 76.174 32.563c-31.392 17.129-57.338 42.974-74.602 74.281a57.871 57.871 0 0 1-1.955-4.232zm335.801 14.663c12.297-13.871 28.025-49.209 38.205-68.102c0 0-30.307-15.857-66.709-46.109c-18.014-14.971-27.164-24.931-63.187 23.616c40.232 18.406 72.814 50.628 91.691 90.595z");
-            messageIconSvgPathElArray[5].setAttribute("fill", "#FFA1E0");
-            messageIconSvgPathElArray[5].setAttribute("d", "M359.3 81.64c71.309-5.37 65.299 64.754 65.628 88.668c0 0 52.798-6.458 53.367-28.893S422.704 19.681 359.3 81.64z");
+            this._elementBuilder.assemble(messageIconSvg, messageIconSvgClasses, [
+                this._elementBuilder.attributeFactory("viewBox", "0 0 512 512"),
+            ]);
+            const messageIconSvgPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 6);
+            this._elementBuilder.assemble(messageIconSvgPathElArray[0], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#FFA1E0"),
+                this._elementBuilder.attributeFactory("d", "M440.978 323.425c3.819-14.914 5.852-30.544 5.852-46.649c0-103.524-83.926-187.46-187.46-187.46c-22.642 0-44.346 4.014-64.439 11.37c-39.597-53.207-108.116-71.15-117.883-62.258c-13.158 11.98-32.999 74.787-5.471 141.8c3.49 8.496 8.713 16.362 15.139 23.411c-9.532 22.473-14.806 47.189-14.806 73.136c0 16.106 2.033 31.735 5.852 46.649c-6.345 11.508-9.789 23.817-9.789 36.614c0 63.903 49.429 115.707 191.397 115.707s191.397-51.804 191.397-115.707c0-12.796-3.444-25.106-9.789-36.613z"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgPathElArray[1], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#FFC7EF"),
+                this._elementBuilder.attributeFactory("d", "M259.37 299.192c-80.334 0-99.93 33.493-99.93 74.808c0 41.316 19.596 74.808 99.93 74.808S359.3 415.316 359.3 374c0-41.315-19.595-74.808-99.93-74.808z"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgPathElArray[2], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#E583C9"),
+                this._elementBuilder.attributeFactory("d", "M228.347 366.537c0 14.532-7.888 26.312-17.617 26.312s-17.617-11.78-17.617-26.312s7.888-26.312 17.617-26.312s17.617 11.78 17.617 26.312zm79.664-26.312c-9.73 0-17.617 11.78-17.617 26.312s7.888 26.312 17.617 26.312s17.617-11.78 17.617-26.312s-7.888-26.312-17.617-26.312z"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgPathElArray[3], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#2B3B47"),
+                this._elementBuilder.attributeFactory("d", "M376.812 230.085V271.805c0 13.985-11.337 25.321-25.321 25.321s-25.321-11.337-25.321-25.321V230.085c0-13.985 11.337-25.321 25.321-25.321s25.321 11.336 25.321 25.321zM167.25 204.763c-13.985 0-25.321 11.337-25.321 25.321V271.804c0 13.985 11.337 25.321 25.321 25.321s25.321-11.337 25.321-25.321v-41.719c0-13.985-11.337-25.322-25.321-25.322zm43.48 144.092c-9.73 0-17.617 11.78-17.617 26.312s7.888 26.312 17.617 26.312s17.617-11.78 17.617-26.312s-7.887-26.312-17.617-26.312zm97.281 0c-9.73 0-17.617 11.78-17.617 26.312s7.888 26.312 17.617 26.312s17.617-11.78 17.617-26.312s-7.888-26.312-17.617-26.312z"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgPathElArray[4], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#E583C9"),
+                this._elementBuilder.attributeFactory("d", "M93.158 182.158c-20.737-50.48-9.529-93.588.383-102.612c6.398-5.825 46.27 3.638 76.174 32.563c-31.392 17.129-57.338 42.974-74.602 74.281a57.871 57.871 0 0 1-1.955-4.232zm335.801 14.663c12.297-13.871 28.025-49.209 38.205-68.102c0 0-30.307-15.857-66.709-46.109c-18.014-14.971-27.164-24.931-63.187 23.616c40.232 18.406 72.814 50.628 91.691 90.595z"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgPathElArray[5], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#FFA1E0"),
+                this._elementBuilder.attributeFactory("d", "M359.3 81.64c71.309-5.37 65.299 64.754 65.628 88.668c0 0 52.798-6.458 53.367-28.893S422.704 19.681 359.3 81.64z"),
+            ]);
             messageIconSvgPathElArray.forEach((el) => messageIconSvg.appendChild(el));
             const messageWrapperClasses = ["bg-white", "p-3"];
-            messageTextWrapper.classList.add(...messageWrapperClasses);
+            this._elementBuilder.assemble(messageTextWrapper, messageWrapperClasses);
             const messageSpanElClasses = ["text-muted"];
-            messageSpanEl.classList.add(...messageSpanElClasses);
+            this._elementBuilder.assemble(messageSpanEl, messageSpanElClasses);
         }
         else {
             const messageBlockClasses = ["d-flex", "flex-row", "pt-2"];
-            messageBlock.classList.add(...messageBlockClasses);
-            messageIconSvg.setAttribute("viewBox", "0 0 64 64");
-            messageIconSvg.setAttribute("fill", "#000000");
-            messageIconSvg.setAttribute("transform", "matrix(-1, 0, 0, 1, 0, 0)");
-            const messageIconSvgFirstGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            messageIconSvgFirstGEl.setAttribute("id", "SVGRepo_bgCarrier");
-            messageIconSvgFirstGEl.setAttribute("stroke-width", "0");
-            const messageIconSvgSecondGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            messageIconSvgSecondGEl.setAttribute("id", "SVGRepo_tracerCarrier");
-            messageIconSvgSecondGEl.setAttribute("stroke-linecap", "round");
-            messageIconSvgSecondGEl.setAttribute("stroke-linejoin", "round");
-            const messageIconSvgThirdGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            messageIconSvgThirdGEl.setAttribute("id", "SVGRepo_iconCarrier");
-            const messageIconSvgThirdGElFirstPathElArray = new Array(6)
-                .fill(null)
-                .map((_) => document.createElementNS("http://www.w3.org/2000/svg", "path"));
-            messageIconSvgThirdGElFirstPathElArray[0].setAttribute("d", "M2 2l4.4 5.9c.3-.6.7-1.2 1-1.9L2 2");
-            messageIconSvgThirdGElFirstPathElArray[0].setAttribute("fill", "#ff9c70");
-            messageIconSvgThirdGElFirstPathElArray[1].setAttribute("d", "M9.1 11.5c.7-.9 1.4-1.8 2-2.7L7.5 6.1c-.3.6-.7 1.2-1 1.9l2.6 3.5");
-            messageIconSvgThirdGElFirstPathElArray[1].setAttribute("fill", "#ffe76e");
-            messageIconSvgThirdGElFirstPathElArray[2].setAttribute("d", "M11.6 14.9l3.3-3.3l-3.8-2.8c-.7.9-1.4 1.8-2 2.7l2.5 3.4");
-            messageIconSvgThirdGElFirstPathElArray[2].setAttribute("fill", "#d3ff75");
-            messageIconSvgThirdGElFirstPathElArray[3].setAttribute("d", "M14.1 18.2l4.8-3.6l-3.9-2.9l-3.3 3.3l2.4 3.2");
-            messageIconSvgThirdGElFirstPathElArray[3].setAttribute("fill", "#59ffba");
-            messageIconSvgThirdGElFirstPathElArray[4].setAttribute("d", "M16.4 21.3c2.2-1.2 4.4-2.5 6.5-3.7l-4.1-3.1l-4.8 3.6l2.4 3.2");
-            messageIconSvgThirdGElFirstPathElArray[4].setAttribute("fill", "#73deff");
-            messageIconSvgThirdGElFirstPathElArray[5].setAttribute("d", "M23 17.6c-2.2 1.2-4.4 2.5-6.5 3.7l3.9 5.2l4.9-4.9l1.4-1.4l-3.7-2.6");
-            messageIconSvgThirdGElFirstPathElArray[5].setAttribute("fill", "#8387f7");
-            messageIconSvgThirdGElFirstPathElArray.forEach((path) => messageIconSvgThirdGEl.appendChild(path));
-            const messageIconSvgThirdGElFirstGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            messageIconSvgThirdGElFirstGEl.setAttribute("fill", "#ff639b");
-            const messageIconSvgThirdGElFirstGElPathElArray = new Array(2)
-                .fill(null)
-                .map((_) => document.createElementNS("http://www.w3.org/2000/svg", "path"));
-            messageIconSvgThirdGElFirstGElPathElArray[0].setAttribute("d", "M32.3 17.8s4.2-7.1 22.2-8.8C36.2 7 31 13.6 31 13.6s.7 2.7 1.3 4.2");
-            messageIconSvgThirdGElFirstGElPathElArray[1].setAttribute("d", "M31.1 18.8s9-6.3 25.1-5.2l-14.7 7.1s8.4 1.2 19.8 1.9l-11.9 3.9s4.2 2.6 11.8 5.1l-8 1.2s6.3.4 8.7 6.2l-5.5-.4s2.5 5.9 5.5 9.3l-5.2-3s3 5.1 5.2 10.1l-5.4-1.6c2.5 5.9 4.8 8.4 4.8 8.4c-13.5-4-30.2-43-30.2-43");
-            messageIconSvgThirdGElFirstGElPathElArray.forEach((path) => messageIconSvgThirdGElFirstGEl.appendChild(path));
-            messageIconSvgThirdGEl.appendChild(messageIconSvgThirdGElFirstGEl);
-            const messageIconSvgThirdGElSecondPathElArray = new Array(3)
-                .fill(null)
-                .map((_) => document.createElementNS("http://www.w3.org/2000/svg", "path"));
-            messageIconSvgThirdGElSecondPathElArray[0].setAttribute("d", "M29.4 20.4s11.9-5.4 28.7-1.6l-18.2 3.6s12.2.6 19.6 5.8H47.8s7.3 1.7 10.6 7.1l-6.9-.7S59 37.8 62 44.2l-7.3-3.8s5.8 3.1 5 13.4L55.5 45s1.6 10.7 4.8 13.2l-4.4-.1c2 2.2 3 3.9 3 3.9H48.1L29.4 20.4");
-            messageIconSvgThirdGElSecondPathElArray[0].setAttribute("fill", "#fca9c9");
-            messageIconSvgThirdGElSecondPathElArray[1].setAttribute("d", "M28.2 19s-.6-4.4 2.6-10.9c0 0 4.1 5.1 5.1 14.2L28.2 19");
-            messageIconSvgThirdGElSecondPathElArray[1].setAttribute("fill", "#b2c1c0");
-            messageIconSvgThirdGElSecondPathElArray[2].setAttribute("d", "M10.4 53.9c1.5 1 5-3 9-3.7c15-2.8 12.2-8.6 12.2-8.6c4.1 5.1-2.2 17.1-5.8 20.4h30.4C56 22 31.1 18.8 31.1 18.8c-.8-7.2-7-10.8-7-10.8c-1.9 4.5-1 12.5-1 12.5C20 25.9 4.2 40.8 2.4 43c-1.8 2.2 3.8 8.8 3.8 8.8c1.5.2 3.4 1.5 4.2 2.1");
-            messageIconSvgThirdGElSecondPathElArray[2].setAttribute("fill", "#eff6f7");
-            messageIconSvgThirdGElSecondPathElArray.forEach((path) => messageIconSvgThirdGEl.appendChild(path));
-            const messageIconSvgThirdGElSecondGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            messageIconSvgThirdGElSecondGEl.setAttribute("fill", "#b2c1c0");
-            const messageIconSvgThirdGElSecondGElPathElArray = new Array(3)
-                .fill(null)
-                .map((_) => document.createElementNS("http://www.w3.org/2000/svg", "path"));
+            this._elementBuilder.assemble(messageBlock, messageBlockClasses);
+            this._elementBuilder.assemble(messageIconSvg, void 0, [
+                this._elementBuilder.attributeFactory("viewBox", "0 0 64 64"),
+                this._elementBuilder.attributeFactory("fill", "#000000"),
+                this._elementBuilder.attributeFactory("transform", "matrix(-1, 0, 0, 1, 0, 0)"),
+            ]);
+            const messageIconSvgGElArray = this._elementBuilder.buildCollection("g", void 0, void 0, 3);
+            this._elementBuilder.assemble(messageIconSvgGElArray[0], void 0, [
+                this._elementBuilder.attributeFactory("id", "SVGRepo_bgCarrier"),
+                this._elementBuilder.attributeFactory("stroke-width", "0"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgGElArray[1], void 0, [
+                this._elementBuilder.attributeFactory("id", "SVGRepo_tracerCarrier"),
+                this._elementBuilder.attributeFactory("stroke-linecap", "round"),
+                this._elementBuilder.attributeFactory("stroke-linejoin", "round"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgGElArray[2], void 0, [
+                this._elementBuilder.attributeFactory("id", "SVGRepo_iconCarrier"),
+            ]);
+            const messageIconSvgThirdGElFirstPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 6);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstPathElArray[0], void 0, [
+                this._elementBuilder.attributeFactory("d", "M2 2l4.4 5.9c.3-.6.7-1.2 1-1.9L2 2"),
+                this._elementBuilder.attributeFactory("fill", "#ff9c70"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstPathElArray[1], void 0, [
+                this._elementBuilder.attributeFactory("d", "M9.1 11.5c.7-.9 1.4-1.8 2-2.7L7.5 6.1c-.3.6-.7 1.2-1 1.9l2.6 3.5"),
+                this._elementBuilder.attributeFactory("fill", "#ffe76e"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstPathElArray[2], void 0, [
+                this._elementBuilder.attributeFactory("d", "M11.6 14.9l3.3-3.3l-3.8-2.8c-.7.9-1.4 1.8-2 2.7l2.5 3.4"),
+                this._elementBuilder.attributeFactory("fill", "#d3ff75"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstPathElArray[3], void 0, [
+                this._elementBuilder.attributeFactory("d", "M14.1 18.2l4.8-3.6l-3.9-2.9l-3.3 3.3l2.4 3.2"),
+                this._elementBuilder.attributeFactory("fill", "#59ffba"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstPathElArray[4], void 0, [
+                this._elementBuilder.attributeFactory("d", "M16.4 21.3c2.2-1.2 4.4-2.5 6.5-3.7l-4.1-3.1l-4.8 3.6l2.4 3.2"),
+                this._elementBuilder.attributeFactory("fill", "#73deff"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstPathElArray[5], void 0, [
+                this._elementBuilder.attributeFactory("d", "M23 17.6c-2.2 1.2-4.4 2.5-6.5 3.7l3.9 5.2l4.9-4.9l1.4-1.4l-3.7-2.6"),
+                this._elementBuilder.attributeFactory("fill", "#8387f7"),
+            ]);
+            messageIconSvgThirdGElFirstPathElArray.forEach((path) => messageIconSvgGElArray[2].appendChild(path));
+            const messageIconSvgThirdGElGELArray = this._elementBuilder.buildCollection("g", void 0, void 0, 4);
+            this._elementBuilder.assemble(messageIconSvgThirdGElGELArray[0], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#ff639b"),
+            ]);
+            const messageIconSvgThirdGElFirstGElPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 2);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstGElPathElArray[0], void 0, [
+                this._elementBuilder.attributeFactory("d", "M32.3 17.8s4.2-7.1 22.2-8.8C36.2 7 31 13.6 31 13.6s.7 2.7 1.3 4.2"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElFirstGElPathElArray[1], void 0, [
+                this._elementBuilder.attributeFactory("d", "M31.1 18.8s9-6.3 25.1-5.2l-14.7 7.1s8.4 1.2 19.8 1.9l-11.9 3.9s4.2 2.6 11.8 5.1l-8 1.2s6.3.4 8.7 6.2l-5.5-.4s2.5 5.9 5.5 9.3l-5.2-3s3 5.1 5.2 10.1l-5.4-1.6c2.5 5.9 4.8 8.4 4.8 8.4c-13.5-4-30.2-43-30.2-43"),
+            ]);
+            messageIconSvgThirdGElFirstGElPathElArray.forEach((path) => messageIconSvgThirdGElGELArray[0].appendChild(path));
+            messageIconSvgGElArray[2].appendChild(messageIconSvgThirdGElGELArray[0]);
+            const messageIconSvgThirdGElSecondPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 3);
+            this._elementBuilder.assemble(messageIconSvgThirdGElSecondPathElArray[0], void 0, [
+                this._elementBuilder.attributeFactory("d", "M29.4 20.4s11.9-5.4 28.7-1.6l-18.2 3.6s12.2.6 19.6 5.8H47.8s7.3 1.7 10.6 7.1l-6.9-.7S59 37.8 62 44.2l-7.3-3.8s5.8 3.1 5 13.4L55.5 45s1.6 10.7 4.8 13.2l-4.4-.1c2 2.2 3 3.9 3 3.9H48.1L29.4 20.4"),
+                this._elementBuilder.attributeFactory("fill", "#fca9c9"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElSecondPathElArray[1], void 0, [
+                this._elementBuilder.attributeFactory("d", "M28.2 19s-.6-4.4 2.6-10.9c0 0 4.1 5.1 5.1 14.2L28.2 19"),
+                this._elementBuilder.attributeFactory("fill", "#b2c1c0"),
+            ]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElSecondPathElArray[2], void 0, [
+                this._elementBuilder.attributeFactory("d", "M10.4 53.9c1.5 1 5-3 9-3.7c15-2.8 12.2-8.6 12.2-8.6c4.1 5.1-2.2 17.1-5.8 20.4h30.4C56 22 31.1 18.8 31.1 18.8c-.8-7.2-7-10.8-7-10.8c-1.9 4.5-1 12.5-1 12.5C20 25.9 4.2 40.8 2.4 43c-1.8 2.2 3.8 8.8 3.8 8.8c1.5.2 3.4 1.5 4.2 2.1"),
+                this._elementBuilder.attributeFactory("fill", "#eff6f7"),
+            ]);
+            messageIconSvgThirdGElSecondPathElArray.forEach((path) => messageIconSvgGElArray[2].appendChild(path));
+            messageIconSvgThirdGElGELArray[1].setAttribute("fill", "#b2c1c0");
+            const messageIconSvgThirdGElSecondGElPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 3);
             messageIconSvgThirdGElSecondGElPathElArray[0].setAttribute("d", "M15.1 52c.8-.6 2.7-1.8 5.6-2.4c2-.4 3.9-1 5.7-1.8c1.8-.8 3.4-1.9 4.4-3.6c.9-1.6.9-3.7.2-5.5c1.1 1.6 1.5 3.9.5 5.9c-.9 2-2.8 3.3-4.7 4.1c-1.9.9-3.9 1.4-6 1.7c-2.4.3-4.7 1.2-5.7 1.6");
             messageIconSvgThirdGElSecondGElPathElArray[1].setAttribute("d", "M6.2 45.8c-.5.4-1.8.6-2.2.1c-.4-.5.3-1.6.8-1.9c.5-.4 1.2-.3 1.6.2c.4.6.3 1.3-.2 1.6");
             messageIconSvgThirdGElSecondGElPathElArray[2].setAttribute("d", "M15.9 43.1c-.1 2.3-1.3 4.6-3.1 6.2c-.9.8-2 1.5-3.1 1.9c-1.1.4-2.4.6-3.6.6c2.3-.7 4.4-1.7 6-3.2c.8-.7 1.5-1.6 2.2-2.5c.6-.9 1.2-1.9 1.6-3");
-            messageIconSvgThirdGElSecondGElPathElArray.forEach((path) => messageIconSvgThirdGElSecondGEl.appendChild(path));
-            messageIconSvgThirdGEl.appendChild(messageIconSvgThirdGElSecondGEl);
-            const messageIconSvgThirdGElFirstPathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            messageIconSvgThirdGElFirstPathEl.setAttribute("d", "M16.4 35.2s.9-.7 1.7-.5c0 0-1.1 1.1-.3 2.9c0 0 .9-2.1 2.5-2.2c0 0-1.1 1.5.3 2.9c0 0 .3-2.1 2.3-2.8c0 0-.3 1.1.7 2.5c0 0-.3-1.9 1.1-2.9c1.4-.9 3-1.5 3.7-3.8c0 0-3.4 3.5-8.1 2.5c-1.1-.4-2.9-.7-3.9 1.4");
-            messageIconSvgThirdGElFirstPathEl.setAttribute("fill", "#3e4347");
-            messageIconSvgThirdGEl.appendChild(messageIconSvgThirdGElFirstPathEl);
-            const messageIconSvgThirdGElThirdGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            messageIconSvgThirdGElThirdGEl.setAttribute("fill", "#b2c1c0");
-            const messageIconSvgThirdGElThirdGElPathElArray = new Array(2)
-                .fill(null)
-                .map((_) => document.createElementNS("http://www.w3.org/2000/svg", "path"));
+            messageIconSvgThirdGElSecondGElPathElArray.forEach((path) => messageIconSvgThirdGElGELArray[1].appendChild(path));
+            messageIconSvgGElArray[2].appendChild(messageIconSvgThirdGElGELArray[1]);
+            const messageIconSvgThirdGElPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 2);
+            messageIconSvgThirdGElPathElArray[0].setAttribute("d", "M16.4 35.2s.9-.7 1.7-.5c0 0-1.1 1.1-.3 2.9c0 0 .9-2.1 2.5-2.2c0 0-1.1 1.5.3 2.9c0 0 .3-2.1 2.3-2.8c0 0-.3 1.1.7 2.5c0 0-.3-1.9 1.1-2.9c1.4-.9 3-1.5 3.7-3.8c0 0-3.4 3.5-8.1 2.5c-1.1-.4-2.9-.7-3.9 1.4");
+            messageIconSvgThirdGElPathElArray[0].setAttribute("fill", "#3e4347");
+            messageIconSvgGElArray[2].appendChild(messageIconSvgThirdGElPathElArray[0]);
+            messageIconSvgThirdGElGELArray[2].setAttribute("fill", "#b2c1c0");
+            const messageIconSvgThirdGElThirdGElPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 2);
             messageIconSvgThirdGElThirdGElPathElArray[0].setAttribute("d", "M25.4 21.6c-1.7-2.2-.6-8.4-.4-9.3c.2-1 5.8 2.8 4.3 9.5c-.1.6-.4 1.2-1 1.2s-.6-1.7-.3-2.8c.3-1.1-.4 0-.6.7c-.3.8-.5.2-.4-.6c.1-.8-.6.8-.4 1.7c.1.9 0 1.1-1.2-.4");
             messageIconSvgThirdGElThirdGElPathElArray[1].setAttribute("d", "M5 42.1c-.5.3-.4.5 0 .3c.5-.2 2.7-.7 2.9 1.6c0 0 .1 1.1.4 0c.3-1-.3-3.7-3.3-1.9");
-            messageIconSvgThirdGElThirdGElPathElArray.forEach((path) => messageIconSvgThirdGElThirdGEl.appendChild(path));
-            messageIconSvgThirdGEl.appendChild(messageIconSvgThirdGElThirdGEl);
-            const messageIconSvgThirdGElFourthGEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            messageIconSvgThirdGElFourthGEl.setAttribute("fill", "#ff639b");
-            const messageIconSvgThirdGElFourthGElPathElArray = new Array(2)
-                .fill(null)
-                .map((_) => document.createElementNS("http://www.w3.org/2000/svg", "path"));
+            messageIconSvgThirdGElThirdGElPathElArray.forEach((path) => messageIconSvgThirdGElGELArray[2].appendChild(path));
+            messageIconSvgGElArray[2].appendChild(messageIconSvgThirdGElGELArray[2]);
+            messageIconSvgThirdGElGELArray[3].setAttribute("fill", "#ff639b");
+            const messageIconSvgThirdGElFourthGElPathElArray = this._elementBuilder.buildCollection("path", void 0, void 0, 2);
             messageIconSvgThirdGElFourthGElPathElArray[0].setAttribute("d", "M23 18s2.7 11 13.5 16.6c0 0-26.6-5.8-13.5-16.6");
             messageIconSvgThirdGElFourthGElPathElArray[1].setAttribute("d", "M31.1 18.8s6.8 18 20.8 23C38.1 28.6 41.5 21.2 30.5 16c0 0 0 1.3.6 2.8");
-            messageIconSvgThirdGElFourthGElPathElArray.forEach((path) => messageIconSvgThirdGElFourthGEl.appendChild(path));
-            messageIconSvgThirdGEl.appendChild(messageIconSvgThirdGElFourthGEl);
-            const messageIconSvgThirdGElSecondPathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            messageIconSvgThirdGElSecondPathEl.setAttribute("fill", "#b2c1c0");
-            messageIconSvgThirdGElSecondPathEl.setAttribute("d", "M31.7 41.6S38 45.7 33.4 62h-7.5s9.3-11.2 5.8-20.4");
-            messageIconSvgThirdGEl.appendChild(messageIconSvgThirdGElSecondPathEl);
-            messageIconSvg.appendChild(messageIconSvgFirstGEl);
-            messageIconSvg.appendChild(messageIconSvgSecondGEl);
-            messageIconSvg.appendChild(messageIconSvgThirdGEl);
+            messageIconSvgThirdGElFourthGElPathElArray.forEach((path) => messageIconSvgThirdGElGELArray[3].appendChild(path));
+            messageIconSvgGElArray[2].appendChild(messageIconSvgThirdGElGELArray[3]);
+            this._elementBuilder.assemble(messageIconSvgThirdGElPathElArray[1], void 0, [
+                this._elementBuilder.attributeFactory("fill", "#b2c1c0"),
+                this._elementBuilder.attributeFactory("d", "M31.7 41.6S38 45.7 33.4 62h-7.5s9.3-11.2 5.8-20.4"),
+            ]);
+            messageIconSvgGElArray[2].appendChild(messageIconSvgThirdGElPathElArray[1]);
+            messageIconSvg.appendChild(messageIconSvgGElArray[0]);
+            messageIconSvg.appendChild(messageIconSvgGElArray[1]);
+            messageIconSvg.appendChild(messageIconSvgGElArray[2]);
             const messageTextWrapperClasses = ["chat", "ml-2", "p-3"];
-            messageTextWrapper.classList.add(...messageTextWrapperClasses);
+            this._elementBuilder.assemble(messageTextWrapper, messageTextWrapperClasses);
         }
         return message;
     }
