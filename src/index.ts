@@ -25,6 +25,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
   if (req.url === "/favicon.ico") req.url = "/assets/favicon.ico";
+  if (req.url === "/sw.js") req.url = "/assets/sw.js";
   if (req.url === "/song") {
     const response = await songEndpoint(res);
     return res.end(JSON.stringify(response));
@@ -138,6 +139,7 @@ const server = http.createServer(async (req, res) => {
     </div>
   </body>
   <script>
+    navigator.serviceWorker.register('sw.js');
     history.pushState({prev:window.location.pathname},'','/');
     ${webcomponents}
   </script>

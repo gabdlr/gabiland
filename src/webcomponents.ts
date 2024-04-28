@@ -736,6 +736,7 @@ class GabiChatWrapper extends HTMLElement {
         const presenterSlot = document.createElement("slot");
         presenterSlot.name = "presenter";
         (_a = this.shadowRoot) === null || _a === void 0 ? void 0 : _a.appendChild(presenterSlot);
+        this.requestForMessageNotification();
     }
     connectedCallback() {
         var _a;
@@ -806,6 +807,13 @@ class GabiChatWrapper extends HTMLElement {
         });
         this.room.on("data", (data) => {
             var _a;
+            if (!data.visitor && document.visibilityState === "hidden") {
+                if (document.visibilityState === "hidden") {
+                    navigator.serviceWorker.ready.then((sw) => {
+                        sw.showNotification("You got a new message from Gabilandia");
+                    });
+                }
+            }
             (_a = this.shadowRoot) === null || _a === void 0 ? void 0 : _a.dispatchEvent(new CustomEvent(gabiChatEvents.data, {
                 detail: data,
                 bubbles: false,
@@ -844,6 +852,14 @@ class GabiChatWrapper extends HTMLElement {
     publishMessage(message) {
         this.drone.publish({ message, room: this.room.name });
     }
+    requestForMessageNotification() {
+        if (Notification.permission === "default") {
+            Notification.requestPermission().then((result) => {
+                console.log(result);
+            });
+        }
+    }
+    displayMessageNotification() { }
 }
 customElements.define("gabi-chat-wrapper", GabiChatWrapper);
 const gabiChatEvents = {
