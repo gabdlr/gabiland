@@ -83,13 +83,13 @@ const server = http.createServer(async (req, res) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index,nofollow,noarchive" />
     <meta name="description" content="A web developer website">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none'; script-src 'unsafe-inline' https://cdn.scaledrone.com/scaledrone.min.js; style-src-elem https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css 'unsafe-inline'; worker-src 'self'; connect-src 'self' wss://api.scaledrone.com/v3/websocket;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none'; script-src 'unsafe-inline' https://cdn.scaledrone.com/scaledrone.min.js; style-src-elem https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css 'unsafe-inline'; worker-src 'self'; connect-src 'self' wss://api.scaledrone.com/v3/websocket;" />
     <title>Gabiland Republic</title>
     <link rel="preconnect" href="wss://api.scaledrone.com/v3/websocket">
     <link rel="preconnect" href="https://res.cloudinary.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="icon" type="ico" href="https://res.cloudinary.com/programming-web-venture/image/upload/v1677117169/favicon_ioevdp.ico"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <style>
    ::-webkit-scrollbar {
@@ -125,9 +125,36 @@ const server = http.createServer(async (req, res) => {
       background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
       overflow: hidden;
     }
+    .notification-box {
+      position: fixed; 
+      bottom: 0;
+      width: 100%;
+      padding: 5px;
+      background: #9b8861;;
+      color: white;
+      font-size: 1.2rem;
+      overflow: hidden;
+      max-height: 35px;
+      .notification-text {
+        line-height: 25px;
+        white-space: nowrap;
+        animation: slideText 10s linear infinite;
+        @media(min-width: 768px){
+          animation: none;
+        }
+      }
+    }
+    @keyframes slideText {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
   </style>
   <body>
-  
+  <div class="notification-box"><div class="notification-text"><b>Gabilandia stands with Palestine 🇵🇸</b> - <em>STOP GENOCIDE</em> - <em>CEASEFIRE NOW!</em></div></div>
 
     ` + chatComponent + `
 
