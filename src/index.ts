@@ -45,17 +45,13 @@ const server = http.createServer(async (req, res) => {
   } else if (req.url === "/spotifyWorker.ts") {
     res.setHeader("Content-Type", "application/javascript");
     return res.end(spotifyWorker);
-  } else if (
-    req.url &&
-    new RegExp(/\/assets\/+(\/[\w]\/)*([\w\.\w])+/).test(req.url)
-  ) {
+  } else if (req.url && req.url.startsWith("/assets/")) {
     try {
-      const file = await utils.serveStaticFile(req.url, res);
-      if (file) {
-        return file;
-      }
+      await utils.serveStaticFile(req.url, res);
     } catch (error) {
-      logError(error);
+      res.setHeader("Content-Type", "text/plain");
+      res.statusCode = 400;
+      res.end("File not found.");
     }
   } else if (req.url?.startsWith("/mensaje=") && !filterRequest(req.url)) {
     const message = req.url.split("=")[1];
