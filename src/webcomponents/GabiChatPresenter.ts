@@ -55,6 +55,9 @@ class GabiChatPresenter extends HTMLElement {
     *, ::after, ::before {
       box-sizing: border-box;
     }
+    @supports not selector(::-webkit-scrollbar) {
+      scrollbar-width: thin;
+    }
     ::-webkit-scrollbar {
       width: 20px;
     }
@@ -130,7 +133,8 @@ class GabiChatPresenter extends HTMLElement {
     }
     #chatContainer .chat-body {
       height: 200px;
-      overflow: scroll;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
     #chatContainer .form-control {
       border-radius: 12px;

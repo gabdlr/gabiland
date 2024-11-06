@@ -1,5 +1,5 @@
 export const webcomponents = `
-"use strict";
+
 class GabiChatPresenter extends HTMLElement {
     constructor() {
         super();
@@ -119,6 +119,12 @@ class GabiChatPresenter extends HTMLElement {
         const CHAT_INPUT_PLACEHOLDER = "Write your message...";
         const styles = document.createElement("style");
         styles.textContent = \`
+    
+    @media(min--moz-device-pixel-ratio: 0) {
+      scrollbar-width: thin;  
+    }
+    
+
     *, ::after, ::before {
       box-sizing: border-box;
     }
@@ -197,7 +203,8 @@ class GabiChatPresenter extends HTMLElement {
     }
     #chatContainer .chat-body {
       height: 200px;
-      overflow: scroll;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
     #chatContainer .form-control {
       border-radius: 12px;
@@ -725,7 +732,7 @@ class GabiChatPresenter extends HTMLElement {
 }
 GabiChatPresenter.isFirstMessage = true;
 customElements.define("gabi-chat-presenter", GabiChatPresenter);
-"use strict";
+
 class GabiChatWrapper extends HTMLElement {
     constructor() {
         var _a;
@@ -854,9 +861,7 @@ class GabiChatWrapper extends HTMLElement {
     }
     requestForMessageNotification() {
         if (Notification.permission === "default") {
-            Notification.requestPermission().then((result) => {
-                console.log(result);
-            });
+            Notification.requestPermission().then();
         }
     }
     displayMessageNotification() { }
@@ -870,7 +875,6 @@ const gabiChatEvents = {
     error: "GabiChatError",
     publishMessage: "GabiChatPublishMessage",
 };
-"use strict";
 
 class GabiSpotifyPresenter extends HTMLElement {
     constructor() {
@@ -1040,7 +1044,7 @@ class GabiSpotifyPresenter extends HTMLElement {
     }
 }
 customElements.define("gabi-spotify-presenter", GabiSpotifyPresenter);
-"use strict";
+
 class GabiSpotifySongFetcher extends HTMLElement {
     constructor() {
         super();
@@ -1086,4 +1090,4 @@ class GabiSpotifySongFetcher extends HTMLElement {
     }
 }
 customElements.define("gabi-spotify-song-fetcher", GabiSpotifySongFetcher);
-`
+`;
