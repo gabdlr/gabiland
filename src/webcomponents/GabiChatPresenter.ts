@@ -94,22 +94,23 @@ class GabiChatPresenter extends HTMLElement {
       right: 30px; 
       z-index: 999;
     }
-    #chatContainer .bg-white {
-      border: 1px solid #E7E7E9;
-      font-size: 10px;
-      border-radius: 20px;
-    }
     #chatContainer .card {
       border-top-right-radius: 0;
       border-top-left-radius: 0;
       border: none;
     }
     #chatContainer .chat {
-      border: none;
-      background: #E2FFE8;
       font-size: 10px;
       border-radius: 20px;
+      max-width: 180px;
     }
+    #chatContainer .chat.admin {
+      border: none;
+      background: #E2FFE8;    
+    }
+    #chatContainer .chat.visitor {
+      border: 1px solid #E7E7E9;
+    }    
     #chatContainer .chat-body::-webkit-scrollbar {
       width: 15px;
     }
@@ -135,6 +136,7 @@ class GabiChatPresenter extends HTMLElement {
       height: 200px;
       overflow-x: hidden;
       overflow-y: auto;
+      padding-bottom: 0.5rem;
     }
     #chatContainer .form-control {
       border-radius: 12px;
@@ -288,7 +290,7 @@ class GabiChatPresenter extends HTMLElement {
       overflow: hidden;
     }
     .form-control:disabled {
-      background-color: var(--bs-form-control-disabled-bg);
+      background-color: var(--bs-secondary-bg);
       opacity: 1;
     }
     .form-group .btn:active{
@@ -408,6 +410,7 @@ class GabiChatPresenter extends HTMLElement {
             "placeholder",
             CHAT_INPUT_PLACEHOLDER
           ),
+          this._elementBuilder.attributeFactory("autocomplete", "off")
         ]
       );
     footerFormContentInputChatInput.disabled = true;
@@ -642,7 +645,7 @@ class GabiChatPresenter extends HTMLElement {
       ]);
       messageIconSvgPathElArray.forEach((el) => messageIconSvg.appendChild(el));
 
-      const messageWrapperClasses = ["bg-white", "p-3"];
+      const messageWrapperClasses = ["bg-white", "p-3", "chat", "visitor"];
       this._elementBuilder.assemble(messageTextWrapper, messageWrapperClasses);
 
       const messageSpanElClasses = ["text-muted"];
@@ -905,7 +908,7 @@ class GabiChatPresenter extends HTMLElement {
       messageIconSvg.appendChild(messageIconSvgGElArray[1]);
       messageIconSvg.appendChild(messageIconSvgGElArray[2]);
 
-      const messageTextWrapperClasses = ["chat", "ml-2", "p-3"];
+      const messageTextWrapperClasses = ["chat", "ml-2", "p-3", "admin"];
       this._elementBuilder.assemble(
         messageTextWrapper,
         messageTextWrapperClasses

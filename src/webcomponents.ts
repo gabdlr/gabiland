@@ -1,5 +1,5 @@
 export const webcomponents = `
-
+"use strict";
 class GabiChatPresenter extends HTMLElement {
     constructor() {
         super();
@@ -119,14 +119,11 @@ class GabiChatPresenter extends HTMLElement {
         const CHAT_INPUT_PLACEHOLDER = "Write your message...";
         const styles = document.createElement("style");
         styles.textContent = \`
-    
-    @media(min--moz-device-pixel-ratio: 0) {
-      scrollbar-width: thin;  
-    }
-    
-
     *, ::after, ::before {
       box-sizing: border-box;
+    }
+    @supports not selector(::-webkit-scrollbar) {
+      scrollbar-width: thin;
     }
     ::-webkit-scrollbar {
       width: 20px;
@@ -164,22 +161,23 @@ class GabiChatPresenter extends HTMLElement {
       right: 30px; 
       z-index: 999;
     }
-    #chatContainer .bg-white {
-      border: 1px solid #E7E7E9;
-      font-size: 10px;
-      border-radius: 20px;
-    }
     #chatContainer .card {
       border-top-right-radius: 0;
       border-top-left-radius: 0;
       border: none;
     }
     #chatContainer .chat {
-      border: none;
-      background: #E2FFE8;
       font-size: 10px;
       border-radius: 20px;
+      max-width: 180px;
     }
+    #chatContainer .chat.admin {
+      border: none;
+      background: #E2FFE8;    
+    }
+    #chatContainer .chat.visitor {
+      border: 1px solid #E7E7E9;
+    }    
     #chatContainer .chat-body::-webkit-scrollbar {
       width: 15px;
     }
@@ -205,6 +203,7 @@ class GabiChatPresenter extends HTMLElement {
       height: 200px;
       overflow-x: hidden;
       overflow-y: auto;
+      padding-bottom: 0.5rem;
     }
     #chatContainer .form-control {
       border-radius: 12px;
@@ -358,7 +357,7 @@ class GabiChatPresenter extends HTMLElement {
       overflow: hidden;
     }
     .form-control:disabled {
-      background-color: var(--bs-form-control-disabled-bg);
+      background-color: var(--bs-secondary-bg);
       opacity: 1;
     }
     .form-group .btn:active{
@@ -451,6 +450,7 @@ class GabiChatPresenter extends HTMLElement {
         const footerFormContentInputChatInput = this._elementBuilder.build("input", footerFormContentInputChatInputClasses, [
             this._elementBuilder.attributeFactory("id", "chatInput"),
             this._elementBuilder.attributeFactory("placeholder", CHAT_INPUT_PLACEHOLDER),
+            this._elementBuilder.attributeFactory("autocomplete", "off")
         ]);
         footerFormContentInputChatInput.disabled = true;
         const footerFormContentButtonClasses = ["btn", "btn-success"];
@@ -583,7 +583,7 @@ class GabiChatPresenter extends HTMLElement {
                 this._elementBuilder.attributeFactory("d", "M359.3 81.64c71.309-5.37 65.299 64.754 65.628 88.668c0 0 52.798-6.458 53.367-28.893S422.704 19.681 359.3 81.64z"),
             ]);
             messageIconSvgPathElArray.forEach((el) => messageIconSvg.appendChild(el));
-            const messageWrapperClasses = ["bg-white", "p-3"];
+            const messageWrapperClasses = ["bg-white", "p-3", "chat", "visitor"];
             this._elementBuilder.assemble(messageTextWrapper, messageWrapperClasses);
             const messageSpanElClasses = ["text-muted"];
             this._elementBuilder.assemble(messageSpanEl, messageSpanElClasses);
@@ -693,7 +693,7 @@ class GabiChatPresenter extends HTMLElement {
             messageIconSvg.appendChild(messageIconSvgGElArray[0]);
             messageIconSvg.appendChild(messageIconSvgGElArray[1]);
             messageIconSvg.appendChild(messageIconSvgGElArray[2]);
-            const messageTextWrapperClasses = ["chat", "ml-2", "p-3"];
+            const messageTextWrapperClasses = ["chat", "ml-2", "p-3", "admin"];
             this._elementBuilder.assemble(messageTextWrapper, messageTextWrapperClasses);
         }
         return message;
@@ -732,7 +732,7 @@ class GabiChatPresenter extends HTMLElement {
 }
 GabiChatPresenter.isFirstMessage = true;
 customElements.define("gabi-chat-presenter", GabiChatPresenter);
-
+"use strict";
 class GabiChatWrapper extends HTMLElement {
     constructor() {
         var _a;
@@ -875,6 +875,7 @@ const gabiChatEvents = {
     error: "GabiChatError",
     publishMessage: "GabiChatPublishMessage",
 };
+"use strict";
 
 class GabiSpotifyPresenter extends HTMLElement {
     constructor() {
@@ -1044,7 +1045,7 @@ class GabiSpotifyPresenter extends HTMLElement {
     }
 }
 customElements.define("gabi-spotify-presenter", GabiSpotifyPresenter);
-
+"use strict";
 class GabiSpotifySongFetcher extends HTMLElement {
     constructor() {
         super();
@@ -1090,4 +1091,4 @@ class GabiSpotifySongFetcher extends HTMLElement {
     }
 }
 customElements.define("gabi-spotify-song-fetcher", GabiSpotifySongFetcher);
-`;
+`
