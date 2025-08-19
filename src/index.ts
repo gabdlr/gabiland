@@ -150,7 +150,7 @@ const server = http.createServer(async (req, res) => {
       }
     </style>
     <body>
-    <div class="notification-box"><div class="notification-text"><b>Gabilandia stands with Palestine 🇵🇸</b> - <em>STOP GENOCIDE</em> - <em>CEASEFIRE NOW!</em></div></div>
+    <!--Gabilandia stands with Palestine 🇵🇸 - STOP GENOCIDE - CEASEFIRE NOW!-->
   
       ` + chatComponent + `
   
